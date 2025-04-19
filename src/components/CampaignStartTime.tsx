@@ -15,7 +15,7 @@ function CampaignStartTime() {
   };
 
   const handleInputClick = () => {
-    const input = document.getElementById('startTime');
+    const input = document.getElementById('startTime') as HTMLInputElement | null;
     if (input) {
       input.showPicker();
     }
