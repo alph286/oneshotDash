@@ -4,14 +4,25 @@ import localforage from 'localforage';
 
 interface Character {
   id: number;
+  // Sezione 1: Intestazione
   name: string;
   class: string;
+  level: number;
   race: string;
+  alignment: string;
+  avatar?: string;
+  
+  // Sezione 2: Stato attuale
   armorClass: number;
   totalHP: number;
   currentHP: number;
   temporaryHP: number;
-  // Add new stats
+  initiative: number;
+  speed: number;
+  conditions: string[];
+  customState: string;
+
+  // Sezione 3: Caratteristiche
   strength: number;
   dexterity: number;
   constitution: number;
@@ -19,7 +30,11 @@ interface Character {
   wisdom: number;
   charisma: number;
   proficiencyBonus: number;
-  // Add calculated bonuses
+  
+  // Sezione 6: Note
+  notes: string;
+  
+  // Calcolati
   strengthBonus: number;
   dexterityBonus: number;
   constitutionBonus: number;
@@ -28,22 +43,23 @@ interface Character {
   charismaBonus: number;
 }
 
-interface CharacterState {
-  characters: Character[];
-  updateCharacter: (id: number, updatedData: Partial<Character>) => void;
-  initializeCharacters: (characters: Character[]) => void;
-}
-
-const defaultCharacters = [
+// Update default characters with new fields
+const defaultCharacters: Character[] = [
   { 
-    id: 1, 
-    name: 'Legolas', 
-    class: 'Archer', 
+    id: 1,
+    name: 'Legolas',
+    class: 'Archer',
+    level: 12,
     race: 'Elf',
+    alignment: 'Caotico Buono',
     armorClass: 15,
     totalHP: 75,
     currentHP: 75,
     temporaryHP: 0,
+    initiative: 3,
+    speed: 30,
+    conditions: [],
+    customState: '',
     strength: 10,
     dexterity: 18,
     constitution: 14,
@@ -56,7 +72,8 @@ const defaultCharacters = [
     constitutionBonus: 0,
     intelligenceBonus: 0,
     wisdomBonus: 0,
-    charismaBonus: 0
+    charismaBonus: 0,
+    notes: 'Ottimo arciere, diffidente con i nani'
   },
   { 
     id: 2, 
@@ -79,7 +96,8 @@ const defaultCharacters = [
     constitutionBonus: 0,
     intelligenceBonus: 0,
     wisdomBonus: 0,
-    charismaBonus: 0
+    charismaBonus: 0,
+    notes: '' // Add missing notes field
   },
   { 
     id: 3, 
@@ -102,7 +120,8 @@ const defaultCharacters = [
     constitutionBonus: 0,
     intelligenceBonus: 0,
     wisdomBonus: 0,
-    charismaBonus: 0
+    charismaBonus: 0,
+    notes: '' // Add missing notes field
   },
   { 
     id: 4, 
@@ -125,7 +144,8 @@ const defaultCharacters = [
     constitutionBonus: 0,
     intelligenceBonus: 0,
     wisdomBonus: 0,
-    charismaBonus: 0
+    charismaBonus: 0,
+    notes: '' // Add missing notes field
   }
 ];
 
@@ -133,6 +153,12 @@ const defaultCharacters = [
 const calculateBonus = (stat: number): number => {
   return Math.floor((stat - 10) / 2);
 };
+
+interface CharacterState {
+  characters: Character[];
+  updateCharacter: (id: number, updatedData: Partial<Character>) => void;
+  initializeCharacters: (characters: Character[]) => void;
+}
 
 export const useCharacterStore = create<CharacterState>()(
   persist(

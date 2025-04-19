@@ -22,7 +22,7 @@ function OneShotManager() {
   };
 
   return (
-    <div className="bg-zinc-900 p-4 rounded-lg shadow-lg mb-4">
+    <div className="bg-zinc-900 bg-opacity-80 p-4 rounded-lg shadow-lg mb-4">
       <h2 className="text-lg font-semibold text-gray-200 mb-4">OneShot Manager</h2>
       
       <div className="space-y-2">
