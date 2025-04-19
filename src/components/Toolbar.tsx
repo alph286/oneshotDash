@@ -1,4 +1,5 @@
 import Time from "./toolbar/Time"
+import CampaignStartDisplay from "./toolbar/CampaignStartDisplay"
 
 function Toolbar() {
   return (
@@ -9,6 +10,7 @@ function Toolbar() {
         </div>
       </div>
       <div className="flex items-center">
+        <CampaignStartDisplay />
         <Time />
       </div>
     </div>

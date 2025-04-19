@@ -8,7 +8,7 @@ interface SidebarProps {
 function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent hover:scrollbar-thumb-gray-700">
-      <div className="text-xl font-bold mb-8 pl-4 text-gray-200">Dashboard</div>
+      <div className="text-xl font-bold mb-8 pl-4 text-gray-200">OS Manager</div>
       <nav className="h-full">
         <button 
           onClick={() => setCurrentPage('home')}
