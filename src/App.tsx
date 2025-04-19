@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import HomePage from './components/HomePage'
-import UsersPage from './components/UsersPage'
+import Personaggi from './components/PersonaggiPage'
 import SettingsPage from './components/SettingsPage'
 import Sidebar from './components/Sidebar'
 import Toolbar from './components/Toolbar' // Import the new Toolbar component
@@ -26,7 +26,7 @@ function App() {
           }}
         >
           {currentPage === 'home' && <HomePage />}
-          {currentPage === 'users' && <UsersPage />}
+          {currentPage === 'personaggi' && <Personaggi />}
           {currentPage === 'settings' && <SettingsPage />}
         </div>
       </div>

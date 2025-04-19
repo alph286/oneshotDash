@@ -20,13 +20,13 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
           Home
         </button>
         <button 
-          onClick={() => setCurrentPage('users')}
+          onClick={() => setCurrentPage('personaggi')}
           className={`w-full flex items-center p-3 mb-2 rounded-lg ${
-            currentPage === 'users' ? 'bg-zinc-900' : 'hover:bg-zinc-900'
+            currentPage === 'personaggi' ? 'bg-zinc-900' : 'hover:bg-zinc-900'
           }`}
         >
           <Users size={20} className="mr-3" />
-          Users
+          Personaggi
         </button>
         <button 
           onClick={() => setCurrentPage('settings')}
