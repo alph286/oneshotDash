@@ -237,7 +237,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
               </div>
 
               {/* HP component */}
-              <div className="col-span-2">
+              <div className="col-span-2 grid gap-4">
                 <HitPoints
                   currentHP={isEditing ? (editedCharacter?.currentHP || 0) : selectedCharacter.currentHP}
                   totalHP={isEditing ? (editedCharacter?.totalHP || 0) : selectedCharacter.totalHP}
@@ -247,12 +247,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                   onTotalHPChange={(value) => handleInputChange('totalHP', value)}
                   onTemporaryHPChange={(value) => handleInputChange('temporaryHP', value)}
                 />
-              </div>
-            </div>
-
-            {/* Various Stats Section - replacing Initiative and Speed section */}
-            <div className="mb-6">
-              <VariousStat
+                <VariousStat
                 initiative={isEditing ? (editedCharacter?.initiative || 0) : selectedCharacter.initiative}
                 speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
                 darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
@@ -263,7 +258,10 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                 onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
                 onInspirationChange={(value) => handleInputChange('inspiration', value)}
               />
+              </div>
             </div>
+
+           
 
             {/* Notes Section */}
             <div className="bg-zinc-800 p-4 rounded-lg">
