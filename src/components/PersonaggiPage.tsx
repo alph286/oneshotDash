@@ -31,13 +31,13 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
 
   const handleEdit = () => {
     if (selectedCharacter) {
-      // Crea una copia profonda dell'oggetto character
       setEditedCharacter({...selectedCharacter});
       
-      // Inizializza i bonus con i valori attuali
+      // Initialize bonuses with existing additional bonus values
       const initialBonuses: Record<string, number> = {};
       stats.forEach(stat => {
-        initialBonuses[stat.field] = 0; // Inizializza a zero
+        const additionalBonusField = `${stat.field}AdditionalBonus` as keyof Character;
+        initialBonuses[stat.field] = (selectedCharacter[additionalBonusField] as number) || 0;
       });
       setBonuses(initialBonuses);
       
@@ -45,25 +45,24 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
     }
   };
 
+  // In the handleSave function, update how we handle the additional bonuses
   const handleSave = () => {
     if (editedCharacter && selectedCharacter) {
-      // Crea una copia dell'oggetto editedCharacter
+      // Create a copy of the edited character
       const updatedCharacter = { ...editedCharacter };
       
-      // Aggiorna i bonus per ogni caratteristica
+      // Save the additional bonuses to their respective fields in the character
       stats.forEach(stat => {
         const field = stat.field;
-        const bonusField = `${field}Bonus` as keyof Character;
+        const additionalBonusField = `${field}AdditionalBonus` as keyof Character;
         
-        // Calcola il bonus base dalla formula (valore - 10) / 2 arrotondato per difetto
-        const abilityScore = updatedCharacter[field] as number;
-        const calculatedBonus = Math.floor((abilityScore - 10) / 2);
-        
-        // Imposta il bonus calcolato
-        (updatedCharacter as any)[bonusField] = calculatedBonus;
+        // Set the additional bonus value from our bonuses state
+        if (bonuses[field] !== undefined) {
+          (updatedCharacter as any)[additionalBonusField] = bonuses[field];
+        }
       });
       
-      // Salva il personaggio aggiornato
+      // Save the character with the updated additional bonuses
       updateCharacter(selectedCharacter.id, updatedCharacter);
       setIsEditing(false);
       setBonuses({});
@@ -209,7 +208,9 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                     baseBonus={isEditing 
                       ? (editedCharacter?.[`${stat.field}Bonus` as keyof Character] as number) 
                       : selectedCharacter[`${stat.field}Bonus` as keyof Character] as number}
-                    additionalBonus={bonuses[stat.field]}
+                    additionalBonus={isEditing 
+                      ? bonuses[stat.field] 
+                      : (selectedCharacter[`${stat.field}AdditionalBonus` as keyof Character] as number) || 0}
                     isEditing={isEditing}
                     onValueChange={(value) => handleInputChange(stat.field, value)}
                     onBonusChange={(value) => {

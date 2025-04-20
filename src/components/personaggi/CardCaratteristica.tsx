@@ -43,7 +43,7 @@ const CardCaratteristica: React.FC<CardCaratteristicaProps> = ({
             />
           </div>
           <div>
-            <label className="text-sm text-gray-400 block">Additional Bonus</label>
+            <label className="text-sm text-gray-400 block">Mod</label>
             <input
               type="number"
               value={additionalBonus}
@@ -65,11 +65,9 @@ const CardCaratteristica: React.FC<CardCaratteristicaProps> = ({
       <div className="text-sm text-gray-300">
         Base: {baseBonus >= 0 ? '+' : ''}{baseBonus}
       </div>
-      {additionalBonus !== 0 && (
-        <div className="text-sm text-amber-500">
-          Bonus: {additionalBonus >= 0 ? '+' : ''}{additionalBonus}
-        </div>
-      )}
+      <div className="text-sm text-amber-500">
+        Mod: {additionalBonus >= 0 ? '+' : ''}{additionalBonus}
+      </div>
       <div className="text-lg font-bold text-green-500 mt-2">
         Total: {totalBonus >= 0 ? '+' : ''}{totalBonus}
       </div>
