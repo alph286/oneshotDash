@@ -6,6 +6,7 @@ import CardCaratteristica from './personaggi/CardCaratteristica';
 import EquipmentCard from './personaggi/EquipmentCard';
 import HitPoints from './personaggi/HitPoints';
 import VariousStat from './personaggi/VariousStat';
+import ToolbarPg from './personaggi/ToolbarPg';
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -118,39 +119,13 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
     <div className="p-6 h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
         <>
-          {/* Edit/Save Buttons moved outside the character sheet */}
-          <div className="flex justify-end mb-4 gap-2">
-            {!isEditing ? (
-              <>
-                <button
-                  onClick={handleEdit}
-                  className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-                >
-                  <Pencil size={20} className="text-amber-500" />
-                </button>
-                <button
-                  onClick={handleExportCharacter}
-                  className="p-2 rounded-lg bg-zinc-800 hover:bg-blue-900 transition-colors"
-                >
-                  <Download size={20} className="text-blue-500" />
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="p-2 rounded-lg bg-zinc-800 hover:bg-red-900 transition-colors"
-                >
-                  <Trash2 size={20} className="text-red-500" />
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={handleSave}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-              >
-                <Save size={20} className="text-green-500" />
-              </button>
-            )}
-          </div>
-
+          <ToolbarPg
+            isEditing={isEditing}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onExport={handleExportCharacter}
+            onDelete={handleDelete}
+          />
           <div className="bg-zinc-900/50 p-6 rounded-lg">
             {/* Header Section */}
             <div className="grid grid-cols-3 gap-4 mb-6 pb-4 border-b border-gray-700">

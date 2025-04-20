@@ -1,17 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useCampaignStore } from '../../stores/campaignStore';
+import Alert from '../ui/Alert';
 
 function CampaignStartTime() {
   const [tempTime, setTempTime] = useState('');
+  const [alert, setAlert] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const { startTime, setStartTime } = useCampaignStore();
 
   useEffect(() => {
     setTempTime(startTime);
   }, [startTime]);
 
+  const [alertKey, setAlertKey] = useState(0);
+
   const handleSubmit = () => {
-    setStartTime(tempTime);
-  //  alert('Orario di inizio aggiornato con successo!');
+    setAlert(null);
+    setAlertKey(prev => prev + 1); // Increment key
+
+    try {
+      if (!tempTime) {
+        throw new Error('Please select a valid time');
+      }
+      setStartTime(tempTime);
+      setAlert({
+        message: 'Orario di inizio aggiornato con successo!',
+        type: 'success'
+      });
+    } catch (error) {
+      setAlert({
+        message: error instanceof Error ? error.message : 'Errore durante il salvataggio',
+        type: 'error'
+      });
+    }
   };
 
   const handleInputClick = () => {
@@ -22,7 +42,9 @@ function CampaignStartTime() {
   };
 
   return (
-    <div className="bg-zinc-900 bg-opacity-80 p-6 rounded-lg shadow-lg">
+    <>
+      {alert && <Alert message={alert.message} type={alert.type} key={alertKey} />}
+      <div className="bg-zinc-900 bg-opacity-80 p-6 rounded-lg shadow-lg">
       <h2 className="text-xl font-bold mb-4">Orario di Inizio Campagna</h2>
       <div className="mb-4" onClick={handleInputClick}>
         <label htmlFor="startTime" className="block mb-2">Seleziona l'orario:</label>
@@ -41,6 +63,7 @@ function CampaignStartTime() {
         Salva Orario
       </button>
     </div>
+    </>
   );
 }
 
