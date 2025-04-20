@@ -3,6 +3,9 @@ import { useCharacterStore } from '../stores/characterStore';
 import { Pencil, Save } from 'lucide-react';
 import type { Character } from '../stores/characterStore';
 import CardCaratteristica from './personaggi/CardCaratteristica';
+import EquipmentCard from './personaggi/EquipmentCard';
+import HitPoints from './personaggi/HitPoints';
+import VariousStat from './personaggi/VariousStat';
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -222,48 +225,44 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                 ))}
               </div>
 
-              {/* Combat Stats */}
-              <div className="col-span-4 grid grid-cols-4 gap-4">
-                {[
-                  { name: 'Armor Class', field: 'armorClass' as keyof Character, value: selectedCharacter.armorClass },
-                  { name: 'Initiative', field: 'initiative' as keyof Character, value: selectedCharacter.initiative, showPlus: true },
-                  { name: 'Speed', field: 'speed' as keyof Character, value: selectedCharacter.speed },
-                  { name: 'HP', field: 'currentHP' as keyof Character, value: selectedCharacter.currentHP, totalField: 'totalHP' as keyof Character, total: selectedCharacter.totalHP }
-                ].map((stat) => (
-                  <div key={stat.name} className="bg-zinc-800 p-3 rounded-lg text-center">
-                    <div className="text-sm text-gray-400">{stat.name}</div>
-                    {isEditing ? (
-                      <div className="space-y-2">
-                        <div>
-                          <label className="text-sm text-gray-400">Current {stat.name}</label>
-                          <input
-                            type="number"
-                            value={editedCharacter?.[stat.field] || 0}
-                            onChange={(e) => handleInputChange(stat.field, parseInt(e.target.value))}
-                            className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-                          />
-                        </div>
-                        {stat.totalField && (
-                          <div>
-                            <label className="text-sm text-gray-400">Total {stat.name}</label>
-                            <input
-                              type="number"
-                              value={editedCharacter?.[stat.totalField] || 0}
-                              onChange={(e) => handleInputChange(stat.totalField, parseInt(e.target.value))}
-                              className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-2xl font-bold text-amber-500">
-                        {stat.showPlus && '+'}
-                        {stat.totalField ? `${stat.value}/${stat.total}` : stat.value}
-                      </div>
-                    )}
-                  </div>
-                ))}
+              {/* Equipment Card */}
+              <div className="col-span-2">
+                <EquipmentCard
+                  armorClass={isEditing ? (editedCharacter?.armorClass || 0) : selectedCharacter.armorClass}
+                  equipment={isEditing ? (editedCharacter?.equipment || '') : selectedCharacter.equipment}
+                  isEditing={isEditing}
+                  onArmorClassChange={(value) => handleInputChange('armorClass', value)}
+                  onEquipmentChange={(value) => handleInputChange('equipment', value)}
+                />
               </div>
+
+              {/* HP component */}
+              <div className="col-span-2">
+                <HitPoints
+                  currentHP={isEditing ? (editedCharacter?.currentHP || 0) : selectedCharacter.currentHP}
+                  totalHP={isEditing ? (editedCharacter?.totalHP || 0) : selectedCharacter.totalHP}
+                  temporaryHP={isEditing ? (editedCharacter?.temporaryHP || 0) : selectedCharacter.temporaryHP}
+                  isEditing={isEditing}
+                  onCurrentHPChange={(value) => handleInputChange('currentHP', value)}
+                  onTotalHPChange={(value) => handleInputChange('totalHP', value)}
+                  onTemporaryHPChange={(value) => handleInputChange('temporaryHP', value)}
+                />
+              </div>
+            </div>
+
+            {/* Various Stats Section - replacing Initiative and Speed section */}
+            <div className="mb-6">
+              <VariousStat
+                initiative={isEditing ? (editedCharacter?.initiative || 0) : selectedCharacter.initiative}
+                speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
+                darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
+                inspiration={isEditing ? (editedCharacter?.inspiration || 0) : selectedCharacter.inspiration}
+                isEditing={isEditing}
+                onInitiativeChange={(value) => handleInputChange('initiative', value)}
+                onSpeedChange={(value) => handleInputChange('speed', value)}
+                onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
+                onInspirationChange={(value) => handleInputChange('inspiration', value)}
+              />
             </div>
 
             {/* Notes Section */}

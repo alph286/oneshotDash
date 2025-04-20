@@ -24,7 +24,10 @@ const CardCaratteristica: React.FC<CardCaratteristicaProps> = ({
   onBonusChange,
   onKeyDown,
 }) => {
-  const totalBonus = baseBonus + additionalBonus;
+  // Calculate the base bonus directly from the value to ensure it's correct
+  const calculatedBaseBonus = Math.floor((value - 10) / 2);
+  // Use the calculated base bonus instead of the passed baseBonus
+  const totalBonus = calculatedBaseBonus + additionalBonus;
 
   if (isEditing) {
     return (
@@ -63,7 +66,7 @@ const CardCaratteristica: React.FC<CardCaratteristicaProps> = ({
       <div className="text-lg font-bold text-amber-500 mb-2">{name}</div>
       <div className="text-xl font-bold text-white mb-1">{value}</div>
       <div className="text-sm text-gray-300">
-        Base: {baseBonus >= 0 ? '+' : ''}{baseBonus}
+        Base: {calculatedBaseBonus >= 0 ? '+' : ''}{calculatedBaseBonus}
       </div>
       <div className="text-sm text-amber-500">
         Mod: {additionalBonus >= 0 ? '+' : ''}{additionalBonus}

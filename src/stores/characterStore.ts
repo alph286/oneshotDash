@@ -21,6 +21,7 @@ export interface Character {
   speed: number;
   conditions: string[];
   customState: string;
+  equipment: string; // New field for equipment details
 
   // Sezione 3: Caratteristiche
   strength: number;
@@ -49,11 +50,15 @@ export interface Character {
   intelligenceBonus: number;
   wisdomBonus: number;
   charismaBonus: number;
+  
+  // Add darkvision and inspiration fields
+  darkvision: number;
+  inspiration: number;
 }
 
 // Update default characters with new fields
 const defaultCharacters: Character[] = [
-  { 
+  {
     id: 1,
     name: 'Legolas',
     class: 'Archer',
@@ -81,7 +86,16 @@ const defaultCharacters: Character[] = [
     intelligenceBonus: 0,
     wisdomBonus: 0,
     charismaBonus: 0,
-    notes: 'Ottimo arciere, diffidente con i nani'
+    notes: 'Ottimo arciere, diffidente con i nani',
+    strengthAdditionalBonus: 0,
+    dexterityAdditionalBonus: 0,
+    constitutionAdditionalBonus: 0,
+    intelligenceAdditionalBonus: 0,
+    wisdomAdditionalBonus: 0,
+    charismaAdditionalBonus: 0,
+    equipment: '',
+    darkvision: 0,
+    inspiration: 0
   },
   {
     id: 2,
@@ -107,12 +121,24 @@ const defaultCharacters: Character[] = [
     charismaBonus: 0,
     notes: '' // Add missing notes field
     ,
+
+
+
     level: 0,
     alignment: '',
     initiative: 0,
     speed: 0,
     conditions: [],
-    customState: ''
+    customState: '',
+    strengthAdditionalBonus: 0,
+    dexterityAdditionalBonus: 0,
+    constitutionAdditionalBonus: 0,
+    intelligenceAdditionalBonus: 0,
+    wisdomAdditionalBonus: 0,
+    charismaAdditionalBonus: 0,
+    equipment: '',
+    darkvision: 0,
+    inspiration: 0
   },
   {
     id: 3,
@@ -138,12 +164,24 @@ const defaultCharacters: Character[] = [
     charismaBonus: 0,
     notes: '' // Add missing notes field
     ,
+
+
+
     level: 0,
     alignment: '',
     initiative: 0,
     speed: 0,
     conditions: [],
-    customState: ''
+    customState: '',
+    strengthAdditionalBonus: 0,
+    dexterityAdditionalBonus: 0,
+    constitutionAdditionalBonus: 0,
+    intelligenceAdditionalBonus: 0,
+    wisdomAdditionalBonus: 0,
+    charismaAdditionalBonus: 0,
+    equipment: '',
+    darkvision: 0,
+    inspiration: 0
   },
   {
     id: 4,
@@ -169,12 +207,24 @@ const defaultCharacters: Character[] = [
     charismaBonus: 0,
     notes: '' // Add missing notes field
     ,
+
+
+
     level: 0,
     alignment: '',
     initiative: 0,
     speed: 0,
     conditions: [],
-    customState: ''
+    customState: '',
+    strengthAdditionalBonus: 0,
+    dexterityAdditionalBonus: 0,
+    constitutionAdditionalBonus: 0,
+    intelligenceAdditionalBonus: 0,
+    wisdomAdditionalBonus: 0,
+    charismaAdditionalBonus: 0,
+    equipment: '',
+    darkvision: 0,
+    inspiration: 0
   }
 ];
 
