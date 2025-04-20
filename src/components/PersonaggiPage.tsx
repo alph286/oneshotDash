@@ -7,6 +7,9 @@ import EquipmentCard from './personaggi/EquipmentCard';
 import HitPoints from './personaggi/HitPoints';
 import VariousStat from './personaggi/VariousStat';
 import ToolbarPg from './personaggi/ToolbarPg';
+import HeaderPg from './personaggi/HeaderPg';
+import NotesPg from './personaggi/NotesPg';
+import Spells from './personaggi/Spells';
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -116,7 +119,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   };
 
   return (
-    <div className="p-6 h-full overflow-auto scrollbar-auto">
+    <div className="h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
         <>
           <ToolbarPg
@@ -127,95 +130,14 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             onDelete={handleDelete}
           />
           <div className="bg-zinc-900/50 p-6 rounded-lg">
-            {/* Header Section */}
-            <div className="grid grid-cols-3 gap-4 mb-6 pb-4 border-b border-gray-700">
-              <div>
-                {isEditing ? (
-                  <div className="space-y-2">
-                    <div>
-                      <label className="text-sm text-gray-400">Name</label>
-                      <input
-                        type="text"
-                        value={editedCharacter?.name || ''}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        onKeyDown={handleKeyPress}
-                        className="text-3xl font-bold bg-zinc-700 rounded px-2 py-1 w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-400">Race</label>
-                      <input
-                        type="text"
-                        value={editedCharacter?.race || ''}
-                        onChange={(e) => handleInputChange('race', e.target.value)}
-                        className="bg-zinc-700 rounded px-2 py-1 w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-400">Class</label>
-                      <input
-                        type="text"
-                        value={editedCharacter?.class || ''}
-                        onChange={(e) => handleInputChange('class', e.target.value)}
-                        className="bg-zinc-700 rounded px-2 py-1 w-full"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <h1 className="text-3xl font-bold text-amber-500">{selectedCharacter.name}</h1>
-                    <p className="text-gray-400">{selectedCharacter.race} {selectedCharacter.class}</p>
-                  </>
-                )}
-              </div>
-              <div className="text-center">
-                {isEditing ? (
-                  <div className="space-y-2">
-                    <div>
-                      <label className="text-sm text-gray-400">Level</label>
-                      <input
-                        type="number"
-                        value={editedCharacter?.level || 0}
-                        onChange={(e) => handleInputChange('level', parseInt(e.target.value))}
-                        className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-400">Alignment</label>
-                      <input
-                        type="text"
-                        value={editedCharacter?.alignment || ''}
-                        onChange={(e) => handleInputChange('alignment', e.target.value)}
-                        className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-gray-400">Level {selectedCharacter.level}</p>
-                    <p className="text-gray-400">{selectedCharacter.alignment}</p>
-                  </>
-                )}
-              </div>
-              <div className="text-right">
-                {isEditing ? (
-                  <div>
-                    <label className="text-sm text-gray-400">Proficiency Bonus</label>
-                    <input
-                      type="number"
-                      value={editedCharacter?.proficiencyBonus || 0}
-                      onChange={(e) => handleInputChange('proficiencyBonus', parseInt(e.target.value))}
-                      className="bg-zinc-700 rounded px-2 py-1 w-full text-right"
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-gray-400">Proficiency Bonus</p>
-                    <p className="text-xl text-amber-500">+{selectedCharacter.proficiencyBonus}</p>
-                  </>
-                )}
-              </div>
-            </div>
+            <HeaderPg
+              character={isEditing ? editedCharacter! : selectedCharacter}
+              isEditing={isEditing}
+              onInputChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+            />
+           
+            
 
             {/* Character Stats Section */}
             <div className="grid grid-cols-6 gap-4 mb-6">
@@ -288,23 +210,14 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
            
 
             {/* Notes Section */}
-            <div className="bg-zinc-800 p-4 rounded-lg">
-              <h3 className="text-lg font-bold mb-2 text-amber-500">Notes</h3>
-              {isEditing ? (
-                <div>
-                  <label className="text-sm text-gray-400 block mb-1">Character Notes</label>
-                  <textarea
-                    value={editedCharacter?.notes || ''}
-                    onChange={(e) => handleInputChange('notes', e.target.value)}
-                    className="w-full bg-zinc-700 rounded px-2 py-1 min-h-[100px]"
-                  />
-                </div>
-              ) : (
-                <div className="max-h-[200px] overflow-auto scrollbar-auto">
-                  <p className="text-gray-300 whitespace-pre-line">{selectedCharacter.notes || 'No notes available.'}</p>
-                </div>
-              )}
-            </div>
+            
+            <NotesPg
+              character={isEditing ? editedCharacter! : selectedCharacter}
+              isEditing={isEditing}
+              onInputChange={handleInputChange}
+            />
+            
+            <Spells />
           </div>
         </>
       ) : (
