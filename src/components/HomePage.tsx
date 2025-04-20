@@ -1,6 +1,7 @@
 import React from 'react';
-import CampaignStartTime from './CampaignStartTime';
-import OneShotManager from './OneShotManager';
+import CampaignStartTime from './utils/CampaignStartTime';
+import OneShotManager from './utils/OneShotManager';
+import CharacterMassImport from './utils/CharacterMassImport';
 
 function HomePage() {
   return (
@@ -18,6 +19,9 @@ function HomePage() {
           </div>
           <div className="w-1/3 pr-4">
           <OneShotManager />
+          </div>
+          <div className="w-1/3 pr-4">
+          <CharacterMassImport />
           </div>
       </div>
     </div>

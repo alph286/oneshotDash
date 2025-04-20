@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent as ReactKeyboardEvent } from 'react'; 
 import { useCharacterStore } from '../stores/characterStore';
-import { Pencil, Save } from 'lucide-react';
+import { Pencil, Save, Trash2, Download } from 'lucide-react';
 import type { Character } from '../stores/characterStore';
 import CardCaratteristica from './personaggi/CardCaratteristica';
 import EquipmentCard from './personaggi/EquipmentCard';
@@ -14,6 +14,7 @@ interface PersonaggiPageProps {
 function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   const characters = useCharacterStore(state => state.characters);
   const updateCharacter = useCharacterStore(state => state.updateCharacter);
+  const deleteCharacter = useCharacterStore(state => state.deleteCharacter); // Add this
   const [isEditing, setIsEditing] = useState(false);
   const [editedCharacter, setEditedCharacter] = useState<Character | null>(null);
   const [bonuses, setBonuses] = useState<Record<string, number>>({});
@@ -88,19 +89,58 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   // REMOVE the getDexterityTotalBonus function entirely
   // const getDexterityTotalBonus = () => { ... }; // DELETE THIS
 
+  const handleDelete = () => {
+    if (selectedCharacter && window.confirm('Are you sure you want to delete this character?')) {
+      deleteCharacter(selectedCharacter.id);
+    }
+  };
+
+  const handleExportCharacter = () => {
+    if (selectedCharacter) {
+      const jsonString = JSON.stringify(selectedCharacter, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const filename = `${selectedCharacter.name}_${selectedCharacter.class}_${selectedCharacter.race}_liv${selectedCharacter.level}`
+        .replace(/[^a-z0-9]/gi, '_') // Replace special characters with underscores
+        .toLowerCase(); // Convert to lowercase
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <div className="p-6 h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
         <>
           {/* Edit/Save Buttons moved outside the character sheet */}
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end mb-4 gap-2">
             {!isEditing ? (
-              <button
-                onClick={handleEdit}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-              >
-                <Pencil size={20} className="text-amber-500" />
-              </button>
+              <>
+                <button
+                  onClick={handleEdit}
+                  className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+                >
+                  <Pencil size={20} className="text-amber-500" />
+                </button>
+                <button
+                  onClick={handleExportCharacter}
+                  className="p-2 rounded-lg bg-zinc-800 hover:bg-blue-900 transition-colors"
+                >
+                  <Download size={20} className="text-blue-500" />
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="p-2 rounded-lg bg-zinc-800 hover:bg-red-900 transition-colors"
+                >
+                  <Trash2 size={20} className="text-red-500" />
+                </button>
+              </>
             ) : (
               <button
                 onClick={handleSave}

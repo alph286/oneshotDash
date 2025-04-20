@@ -2,7 +2,7 @@ import { Home, Users, Settings, ChevronDown } from 'lucide-react'
 import { useCharacterStore } from '../stores/characterStore'
 import { Character } from '../stores/characterStore'; // Add this import
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Upload } from 'lucide-react'
 
 interface SidebarProps {
   currentPage: string
@@ -37,6 +37,23 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
       notes: ''
     };
     addCharacter(newCharacter);
+  };
+
+  const handleImportCharacter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const characterData = JSON.parse(e.target?.result as string);
+          addCharacter(characterData);
+        } catch (error) {
+          console.error('Error parsing character file:', error);
+          alert('Invalid character file');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
 
   return (
@@ -88,10 +105,25 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               {/* Add the + button */}
               <button
                 onClick={handleAddCharacter}
-                className="w-full flex items-center p-2 rounded-lg hover:bg-zinc-900 text-gray-400 focus:outline-none"
+                className="w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
               >
                 <Plus size={16} className="mr-2" />
                 Add Character
+              </button>
+              {/* Add Import Character button */}
+              <button
+                className="w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+              >
+                <label className="w-full flex items-center cursor-pointer">
+                  <Upload size={16} className="mr-2" />
+                  Import Character
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    onChange={handleImportCharacter} 
+                    className="hidden"
+                  />
+                </label>
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useCampaignStore } from '../stores/campaignStore';
+import { useCampaignStore } from '../../stores/campaignStore';
 
 function CampaignStartTime() {
   const [tempTime, setTempTime] = useState('');

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { exportAllStores, importAllStores } from '../utils/storeManager';
+import { exportAllStores, importAllStores } from '../../utils/storeManager';
 
 function OneShotManager() {
   const fileInputRef = useRef<HTMLInputElement>(null);
