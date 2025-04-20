@@ -1,20 +1,26 @@
 [
   {
-    "id": "fireball",
-    "level": 3,
-    "name": "Fireball",
-    "imageUrl": "/images/spells/fireball.jpg"
+    "id": "guida",
+    "level": 0,
+    "name": "Guida",
+    "imageUrl": "/images/spells/guida.jpg"
   },
   {
-    "id": "magic-missile",
-    "level": 1,
-    "name": "Magic Missile",
-    "imageUrl": "/images/spells/magic-missile.jpg"
+    "id": "taumaturgia",
+    "level": 0,
+    "name": "Taumaturgia",
+    "imageUrl": "/images/spells/taumaturgia.jpg"
   },
   {
-    "id": "cure-wounds",
-    "level": 1,
-    "name": "Cure Wounds",
-    "imageUrl": "/images/spells/cure-wounds.jpg"
+    "id": "fiamma-sacra",
+    "level": 0,
+    "name": "Fiamma Sacra",
+    "imageUrl": "/images/spells/fiamma-sacra.jpg"
+  },
+  {
+    "id": "luce",
+    "level": 0,
+    "name": "Luce",
+    "imageUrl": "/images/spells/luce.jpg"
   }
 ]
