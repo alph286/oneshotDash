@@ -40,6 +40,8 @@ export interface Character {
   notes?: string;
   darkvision?: number;
   inspiration?: number;
+  showNotes?: boolean;
+  showSpells?: boolean;
 }
 
 

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "jsx": "react-jsx", // Keep only this line
     "baseUrl": ".",
     "paths": {

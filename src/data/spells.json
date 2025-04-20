@@ -1,0 +1,20 @@
+[
+  {
+    "id": "fireball",
+    "level": 3,
+    "name": "Fireball",
+    "imageUrl": "/images/spells/fireball.jpg"
+  },
+  {
+    "id": "magic-missile",
+    "level": 1,
+    "name": "Magic Missile",
+    "imageUrl": "/images/spells/magic-missile.jpg"
+  },
+  {
+    "id": "cure-wounds",
+    "level": 1,
+    "name": "Cure Wounds",
+    "imageUrl": "/images/spells/cure-wounds.jpg"
+  }
+]

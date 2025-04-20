@@ -10,12 +10,12 @@ interface HeaderPgProps {
 
 function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgProps) {
   return (
-    <div className="grid grid-cols-[min-content_min-content_min-content] gap-6 mb-6 pb-4 border-b border-gray-700 whitespace-nowrap">
+    <div className={`grid ${isEditing ? 'grid-cols-[150px_minmax(400px,1fr)_150px]' : 'grid-cols-[min-content_min-content_min-content]'} gap-6 mb-6 pb-4 border-b border-gray-700 whitespace-nowrap`}>
       {/* Level Section */}
-      <div className="text-center w-min">
+      <div className={`text-center ${isEditing ? 'w-full' : 'w-min'}`}>
         {isEditing ? (
-          <div>
-            <label className="text-sm text-gray-400">Level</label>
+          <div className="space-y-3">
+            <label className="block text-sm text-gray-400 mb-1">Level</label>
             <input
               type="number"
               value={character.level}
@@ -32,11 +32,11 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
       </div>
 
       {/* Name, Race, Class Section */}
-      <div className="text-left w-min">
+      <div className={`text-left ${isEditing ? 'w-full' : 'w-min'}`}>
         {isEditing ? (
-          <div className="space-y-2">
-            <div>
-              <label className="text-sm text-gray-400">Name</label>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-sm text-gray-400 mb-1">Name</label>
               <input
                 type="text"
                 value={character.name}
@@ -45,8 +45,8 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
                 className="text-3xl font-bold bg-zinc-700 rounded px-2 py-1 w-full"
               />
             </div>
-            <div>
-              <label className="text-sm text-gray-400">Race</label>
+            <div className="space-y-2">
+              <label className="block text-sm text-gray-400 mb-1">Race</label>
               <input
                 type="text"
                 value={character.race}
@@ -54,8 +54,8 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
                 className="bg-zinc-700 rounded px-2 py-1 w-full"
               />
             </div>
-            <div>
-              <label className="text-sm text-gray-400">Class</label>
+            <div className="space-y-2">
+              <label className="block text-sm text-gray-400 mb-1">Class</label>
               <input
                 type="text"
                 value={character.class}
@@ -73,10 +73,10 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
       </div>
 
       {/* Proficiency Bonus Section */}
-      <div className="text-left w-min">
+      <div className={`text-left ${isEditing ? 'w-full' : 'w-min'}`}>
         {isEditing ? (
-          <div>
-            <label className="text-sm text-gray-400">Proficiency Bonus</label>
+          <div className="space-y-3">
+            <label className="block text-sm text-gray-400 mb-1">Proficiency Bonus</label>
             <input
               type="number"
               value={character.proficiencyBonus}

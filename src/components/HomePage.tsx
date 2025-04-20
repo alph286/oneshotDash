@@ -5,6 +5,7 @@ import CharacterMassImport from './utils/CharacterMassImport';
 
 function HomePage() {
   return (
+    <div className='p-8'>
     <div className="text-gray-300">
       {/* Title and Subtitle */}
       <div className="mb-8">
@@ -24,6 +25,7 @@ function HomePage() {
           <CharacterMassImport />
           </div>
       </div>
+    </div>
     </div>
   );
 }

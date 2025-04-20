@@ -118,6 +118,33 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
     }
   };
 
+  // Remove individual showNotes/showSpells state
+  // const [showNotes, setShowNotes] = useState(true);
+  // const [showSpells, setShowSpells] = useState(true);
+  
+  // Modify toggle handlers to use character state
+  const handleToggleNotes = () => {
+    if (selectedCharacter) {
+      updateCharacter(selectedCharacter.id, {
+        ...selectedCharacter,
+        showNotes: !selectedCharacter.showNotes
+      });
+    }
+  };
+  
+  const handleToggleSpells = () => {
+    if (selectedCharacter) {
+      updateCharacter(selectedCharacter.id, {
+        ...selectedCharacter,
+        showSpells: !selectedCharacter.showSpells
+      });
+    }
+  };
+  
+  // Add these fields to the Character type in characterStore.ts
+  // showNotes?: boolean;
+  // showSpells?: boolean;
+
   return (
     <div className="h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
@@ -128,6 +155,10 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             onSave={handleSave}
             onExport={handleExportCharacter}
             onDelete={handleDelete}
+            onToggleNotes={handleToggleNotes}
+            onToggleSpells={handleToggleSpells}
+            showNotes={selectedCharacter.showNotes ?? true}
+            showSpells={selectedCharacter.showSpells ?? true}
           />
           <div className="bg-zinc-900/50 p-6 rounded-lg">
             <HeaderPg
@@ -211,13 +242,15 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
 
             {/* Notes Section */}
             
-            <NotesPg
-              character={isEditing ? editedCharacter! : selectedCharacter}
-              isEditing={isEditing}
-              onInputChange={handleInputChange}
-            />
-            
-            <Spells />
+            {(selectedCharacter?.showNotes ?? true) && (
+              <NotesPg
+                character={isEditing ? editedCharacter! : selectedCharacter}
+                isEditing={isEditing}
+                onInputChange={handleInputChange}
+              />
+            )}
+
+            {(selectedCharacter?.showSpells ?? true) && <Spells />}
           </div>
         </>
       ) : (

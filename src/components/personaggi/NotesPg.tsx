@@ -21,8 +21,10 @@ function NotesPg({ character, isEditing, onInputChange }: NotesPgProps) {
           />
         </div>
       ) : (
-        <div>
-          <p className="text-gray-300 whitespace-pre-line text-left">{character.notes || 'No notes available.'}</p>
+        <div className="columns-2 gap-8">
+          <p className="text-gray-300 whitespace-pre-line text-left break-words">
+            {character.notes || 'No notes available.'}
+          </p>
         </div>
       )}
     </div>
