@@ -17,7 +17,7 @@ function App() {
       <div className="flex-1 flex flex-col">
         <Toolbar />
         <div
-          className="flex-1 overflow-y-auto p-8 bg-zinc-950 content-wrapper"
+          className="flex-1 overflow-y-auto scrollbar-auto p-8 bg-zinc-950 content-wrapper"
           style={{
             backgroundImage: currentPage === 'home' ? `url(${bgImage})` : 'none',
             backgroundSize: 'cover',

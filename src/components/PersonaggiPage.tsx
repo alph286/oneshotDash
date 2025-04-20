@@ -80,13 +80,16 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   
   const handleKeyPress = (e: ReactKeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent default Enter behavior
+      e.preventDefault();
       handleSave();
     }
   };
-  
+
+  // REMOVE the getDexterityTotalBonus function entirely
+  // const getDexterityTotalBonus = () => { ... }; // DELETE THIS
+
   return (
-    <div className="p-6">
+    <div className="p-6 h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
         <>
           {/* Edit/Save Buttons moved outside the character sheet */}
@@ -236,7 +239,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                 />
               </div>
 
-              {/* HP component */}
+              {/* HP component and VariousStat */}
               <div className="col-span-2 grid gap-4">
                 <HitPoints
                   currentHP={isEditing ? (editedCharacter?.currentHP || 0) : selectedCharacter.currentHP}
@@ -247,13 +250,19 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                   onTotalHPChange={(value) => handleInputChange('totalHP', value)}
                   onTemporaryHPChange={(value) => handleInputChange('temporaryHP', value)}
                 />
-                <VariousStat
-                initiative={isEditing ? (editedCharacter?.initiative || 0) : selectedCharacter.initiative}
+                
+              
+              <VariousStat
+                // Remove dexterityTotalBonus prop - This comment seems outdated now, let's remove it.
+                initiative={isEditing 
+                  // Use the initiative value directly from the edited character state
+                  ? (editedCharacter?.initiative ?? 0) 
+                  : selectedCharacter.initiative} 
                 speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
                 darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
                 inspiration={isEditing ? (editedCharacter?.inspiration || 0) : selectedCharacter.inspiration}
                 isEditing={isEditing}
-                onInitiativeChange={(value) => handleInputChange('initiative', value)}
+                // Remove onInitiativeChange prop
                 onSpeedChange={(value) => handleInputChange('speed', value)}
                 onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
                 onInspirationChange={(value) => handleInputChange('inspiration', value)}
@@ -276,7 +285,9 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                   />
                 </div>
               ) : (
-                <p className="text-gray-300">{selectedCharacter.notes || 'No notes available.'}</p>
+                <div className="max-h-[200px] overflow-auto scrollbar-auto">
+                  <p className="text-gray-300 whitespace-pre-line">{selectedCharacter.notes || 'No notes available.'}</p>
+                </div>
               )}
             </div>
           </div>
@@ -290,5 +301,9 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
     </div>
   );
 }
+
+// Helper function (can be placed outside the component or imported)
+const calculateBonus = (value: number): number => Math.floor((value - 10) / 2);
+
 
 export default PersonaggiPage;

@@ -1,28 +1,31 @@
 import React from 'react';
 
 interface VariousStatProps {
-  initiative: number;
+  // Remove dexterityTotalBonus
+  initiative: number; // This now represents the total dexterity bonus
   speed: number;
   darkvision: number;
   inspiration: number;
   isEditing: boolean;
-  onInitiativeChange: (value: number) => void;
+  // Remove onInitiativeChange
   onSpeedChange: (value: number) => void;
   onDarkvisionChange: (value: number) => void;
   onInspirationChange: (value: number) => void;
 }
 
 const VariousStat: React.FC<VariousStatProps> = ({
-  initiative,
+  initiative, // Use initiative directly
   speed,
   darkvision,
   inspiration,
   isEditing,
-  onInitiativeChange,
   onSpeedChange,
   onDarkvisionChange,
   onInspirationChange,
 }) => {
+  // Remove internal initiative calculation
+  // const totalInitiative = dexterityTotalBonus + initiative; 
+  
   return (
     <div className="bg-zinc-800 p-4 rounded-lg">
       <h3 className="text-lg font-bold text-amber-500 mb-3">Character Stats</h3>
@@ -31,18 +34,10 @@ const VariousStat: React.FC<VariousStatProps> = ({
         {/* Initiative */}
         <div className="bg-zinc-700 p-2 rounded-lg">
           <div className="text-sm text-gray-400 text-center mb-1">Initiative</div>
-          {isEditing ? (
-            <input
-              type="number"
-              value={initiative}
-              onChange={(e) => onInitiativeChange(parseInt(e.target.value) || 0)}
-              className="w-full bg-zinc-600 text-center rounded px-2 py-1"
-            />
-          ) : (
-            <div className="text-xl font-bold text-amber-500 text-center">
-              +{initiative}
-            </div>
-          )}
+          {/* Display initiative directly. No editing needed here as it's derived. */}
+          <div className="text-xl font-bold text-amber-500 text-center">
+            {initiative >= 0 ? `+${initiative}` : initiative}
+          </div>
         </div>
         
         {/* Speed */}
