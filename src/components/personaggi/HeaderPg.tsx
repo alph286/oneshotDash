@@ -10,8 +10,29 @@ interface HeaderPgProps {
 
 function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgProps) {
   return (
-    <div className="grid grid-cols-3 gap-4 mb-6 pb-4 border-b border-gray-700">
-      <div>
+    <div className="grid grid-cols-[min-content_min-content_min-content] gap-6 mb-6 pb-4 border-b border-gray-700 whitespace-nowrap">
+      {/* Level Section */}
+      <div className="text-center w-min">
+        {isEditing ? (
+          <div>
+            <label className="text-sm text-gray-400">Level</label>
+            <input
+              type="number"
+              value={character.level}
+              onChange={(e) => onInputChange('level', parseInt(e.target.value))}
+              className="bg-zinc-700 rounded px-2 py-1 w-20"
+            />
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-400">Level</p>
+            <p className="text-3xl font-bold text-amber-500">{character.level}</p>
+          </>
+        )}
+      </div>
+
+      {/* Name, Race, Class Section */}
+      <div className="text-left w-min">
         {isEditing ? (
           <div className="space-y-2">
             <div>
@@ -45,41 +66,14 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
           </div>
         ) : (
           <>
-            <h1 className="text-3xl font-bold text-amber-500">{character.name}</h1>
-            <p className="text-gray-400">{character.race} {character.class}</p>
+            <p className="text-gray-400 truncate">{character.race} - {character.class}</p>
+            <h1 className="text-3xl font-bold text-amber-500 truncate">{character.name}</h1>
           </>
         )}
       </div>
-      <div className="text-center">
-        {isEditing ? (
-          <div className="space-y-2">
-            <div>
-              <label className="text-sm text-gray-400">Level</label>
-              <input
-                type="number"
-                value={character.level}
-                onChange={(e) => onInputChange('level', parseInt(e.target.value))}
-                className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-              />
-            </div>
-            <div>
-              <label className="text-sm text-gray-400">Alignment</label>
-              <input
-                type="text"
-                value={character.alignment}
-                onChange={(e) => onInputChange('alignment', e.target.value)}
-                className="bg-zinc-700 rounded px-2 py-1 w-full text-center"
-              />
-            </div>
-          </div>
-        ) : (
-          <>
-            <p className="text-gray-400">Level {character.level}</p>
-            <p className="text-gray-400">{character.alignment}</p>
-          </>
-        )}
-      </div>
-      <div className="text-right">
+
+      {/* Proficiency Bonus Section */}
+      <div className="text-left w-min">
         {isEditing ? (
           <div>
             <label className="text-sm text-gray-400">Proficiency Bonus</label>
@@ -87,13 +81,13 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
               type="number"
               value={character.proficiencyBonus}
               onChange={(e) => onInputChange('proficiencyBonus', parseInt(e.target.value))}
-              className="bg-zinc-700 rounded px-2 py-1 w-full text-right"
+              className="bg-zinc-700 rounded px-2 py-1 w-20"
             />
           </div>
         ) : (
           <>
             <p className="text-gray-400">Proficiency Bonus</p>
-            <p className="text-xl text-amber-500">+{character.proficiencyBonus}</p>
+            <p className="text-3xl text-amber-500">+{character.proficiencyBonus}</p>
           </>
         )}
       </div>
