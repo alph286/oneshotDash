@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import localforage from 'localforage';
 
-interface Character {
+export interface Character {
   id: number;
   // Sezione 1: Intestazione
   name: string;
@@ -30,6 +30,14 @@ interface Character {
   wisdom: number;
   charisma: number;
   proficiencyBonus: number;
+  
+  // Additional Bonus per caratteristica
+  strengthAdditionalBonus: number;
+  dexterityAdditionalBonus: number;
+  constitutionAdditionalBonus: number;
+  intelligenceAdditionalBonus: number;
+  wisdomAdditionalBonus: number;
+  charismaAdditionalBonus: number;
   
   // Sezione 6: Note
   notes: string;
@@ -75,10 +83,10 @@ const defaultCharacters: Character[] = [
     charismaBonus: 0,
     notes: 'Ottimo arciere, diffidente con i nani'
   },
-  { 
-    id: 2, 
-    name: 'Gimli', 
-    class: 'Warrior', 
+  {
+    id: 2,
+    name: 'Gimli',
+    class: 'Warrior',
     race: 'Dwarf',
     armorClass: 18,
     totalHP: 100,
@@ -98,11 +106,18 @@ const defaultCharacters: Character[] = [
     wisdomBonus: 0,
     charismaBonus: 0,
     notes: '' // Add missing notes field
+    ,
+    level: 0,
+    alignment: '',
+    initiative: 0,
+    speed: 0,
+    conditions: [],
+    customState: ''
   },
-  { 
-    id: 3, 
-    name: 'Gandalf', 
-    class: 'Wizard', 
+  {
+    id: 3,
+    name: 'Gandalf',
+    class: 'Wizard',
     race: 'Maia',
     armorClass: 12,
     totalHP: 90,
@@ -122,11 +137,18 @@ const defaultCharacters: Character[] = [
     wisdomBonus: 0,
     charismaBonus: 0,
     notes: '' // Add missing notes field
+    ,
+    level: 0,
+    alignment: '',
+    initiative: 0,
+    speed: 0,
+    conditions: [],
+    customState: ''
   },
-  { 
-    id: 4, 
-    name: 'Aragorn', 
-    class: 'Ranger', 
+  {
+    id: 4,
+    name: 'Aragorn',
+    class: 'Ranger',
     race: 'Human',
     armorClass: 16,
     totalHP: 85,
@@ -146,12 +168,24 @@ const defaultCharacters: Character[] = [
     wisdomBonus: 0,
     charismaBonus: 0,
     notes: '' // Add missing notes field
+    ,
+    level: 0,
+    alignment: '',
+    initiative: 0,
+    speed: 0,
+    conditions: [],
+    customState: ''
   }
 ];
 
 // Add helper function to calculate bonus
 const calculateBonus = (stat: number): number => {
   return Math.floor((stat - 10) / 2);
+};
+
+// Modify the calculateTotalBonus function to include additional bonus
+const calculateTotalBonus = (stat: number, additionalBonus: number = 0): number => {
+  return Math.floor((stat - 10) / 2) + additionalBonus;
 };
 
 interface CharacterState {
@@ -165,26 +199,26 @@ export const useCharacterStore = create<CharacterState>()(
     (set, get) => ({
       characters: defaultCharacters.map(char => ({
         ...char,
-        strengthBonus: calculateBonus(char.strength),
-        dexterityBonus: calculateBonus(char.dexterity),
-        constitutionBonus: calculateBonus(char.constitution),
-        intelligenceBonus: calculateBonus(char.intelligence),
-        wisdomBonus: calculateBonus(char.wisdom),
-        charismaBonus: calculateBonus(char.charisma)
+        strengthBonus: calculateTotalBonus(char.strength, char.strengthAdditionalBonus),
+        dexterityBonus: calculateTotalBonus(char.dexterity, char.dexterityAdditionalBonus),
+        constitutionBonus: calculateTotalBonus(char.constitution, char.constitutionAdditionalBonus),
+        intelligenceBonus: calculateTotalBonus(char.intelligence, char.intelligenceAdditionalBonus),
+        wisdomBonus: calculateTotalBonus(char.wisdom, char.wisdomAdditionalBonus),
+        charismaBonus: calculateTotalBonus(char.charisma, char.charismaAdditionalBonus)
       })),
       updateCharacter: (id, updatedData) => set((state) => {
         const updatedCharacters = state.characters.map(char => {
           if (char.id === id) {
             const updatedChar = { ...char, ...updatedData };
-            // Recalculate bonuses when stats change
+            // Recalculate bonuses when stats change, including additional bonuses
             return {
               ...updatedChar,
-              strengthBonus: calculateBonus(updatedChar.strength),
-              dexterityBonus: calculateBonus(updatedChar.dexterity),
-              constitutionBonus: calculateBonus(updatedChar.constitution),
-              intelligenceBonus: calculateBonus(updatedChar.intelligence),
-              wisdomBonus: calculateBonus(updatedChar.wisdom),
-              charismaBonus: calculateBonus(updatedChar.charisma)
+              strengthBonus: calculateTotalBonus(updatedChar.strength, updatedChar.strengthAdditionalBonus),
+              dexterityBonus: calculateTotalBonus(updatedChar.dexterity, updatedChar.dexterityAdditionalBonus),
+              constitutionBonus: calculateTotalBonus(updatedChar.constitution, updatedChar.constitutionAdditionalBonus),
+              intelligenceBonus: calculateTotalBonus(updatedChar.intelligence, updatedChar.intelligenceAdditionalBonus),
+              wisdomBonus: calculateTotalBonus(updatedChar.wisdom, updatedChar.wisdomAdditionalBonus),
+              charismaBonus: calculateTotalBonus(updatedChar.charisma, updatedChar.charismaAdditionalBonus)
             };
           }
           return char;
