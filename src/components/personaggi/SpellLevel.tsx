@@ -17,6 +17,11 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
   const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
   const levelNumber = parseInt(level.replace(/\D/g, '') || '0');
 
+  const handleSave = () => {
+    setIsEditing(false);
+    // Removed redundant onSpellsChange call
+  };
+
   const handleAddSpell = (spell: Spell) => {
     if (onSpellsChange && !spells.includes(spell.name)) {
       const newSpells = [...spells, spell.name];
@@ -48,7 +53,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
         <h4 className="text-md font-bold text-amber-400">{level}</h4>
         {isEditing ? (
           <button
-            onClick={() => setIsEditing(false)}
+            onClick={handleSave}
             className="p-1 rounded hover:bg-zinc-600 transition-colors"
           >
             <Save size={16} className="text-green-500" />

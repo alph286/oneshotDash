@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import SpellLevel from './SpellLevel';
+import { useCharacterStore } from '../../stores/characterStore';
 
 function Spells() {
-  const [spells, setSpells] = useState({
+  const { updateCharacter, characters } = useCharacterStore();
+  const [currentCharacterId] = useState(characters[0]?.id);
+  
+  // Initialize from character store
+  const [spells, setSpells] = useState(() => characters[0]?.spells || {
     cantrips: [],
     level1: [],
     level2: [],
@@ -16,10 +21,19 @@ function Spells() {
   });
 
   const handleSpellsChange = (level: string, newSpells: string[]) => {
-    setSpells(prev => ({
-      ...prev,
-      [level]: newSpells
-    }));
+    setSpells(prev => {
+      const updatedSpells = {
+        ...prev,
+        [level]: newSpells
+      };
+      
+      if (currentCharacterId) {
+        updateCharacter(currentCharacterId, { 
+          spells: updatedSpells 
+        });
+      }
+      return updatedSpells;
+    });
   };
 
   return (
