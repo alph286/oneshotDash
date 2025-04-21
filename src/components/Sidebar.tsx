@@ -81,8 +81,8 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
 
     const newFase = {
       number: newNumber,
-      title: `Fase ${newNumber}`,
-      estimatedTime: '1 hour'
+      title: `Titolo`,
+      estimatedTime: '30'
     };
     addPhase(newFase);
   };
@@ -90,6 +90,17 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const handleImportFase = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Add your logic for importing fasi
   };
+
+  // Update the totalEstimatedTime calculation
+  const totalMinutes = fasi.reduce((total, fase) => {
+    const time = parseFloat(fase.estimatedTime) || 0;
+    return total + time;
+  }, 0);
+  
+  // Convert total minutes to hh:mm format
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
@@ -174,6 +185,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
             >
               <Settings size={20} className="mr-3" />
               <span>Storia</span>
+              <span className={`ml-2 text-xs ${
+                currentPage.startsWith('fase-') ? 'text-zinc-900' : 'text-gray-400'
+              }`}>
+                ({formattedTime})
+              </span>
               <ChevronDown 
                 size={16} 
                 className={`ml-auto transition-transform duration-200 ${
@@ -197,8 +213,8 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
                     }`}
                   >
                     <div className="flex flex-col">
-                      <span>Fase {fase.number}</span>
-                      <span className={`text-xs ${
+                      <span className='text-left'>Fase {fase.number}</span>
+                      <span className={`text-xs text-left ${
                         currentPage === `fase-${fase.id}` ? 'text-zinc-900' : 'text-gray-400'
                       }`}>
                         {fase.title}

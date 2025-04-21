@@ -18,7 +18,10 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
 
   const handleEdit = () => {
     if (currentFase) {
-      setEditedFase({...currentFase});
+      setEditedFase({
+        ...currentFase,
+        title: currentFase.title || 'Titolo' // Set default title if empty
+      });
       setIsEditing(true);
     }
   };
@@ -66,6 +69,7 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
         isEditing={isEditing}
         editedFase={editedFase}
         onEditChange={handleEditChange}
+        allFasi={fasi} // Add this
       />
     </div>
   );
