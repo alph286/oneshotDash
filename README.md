@@ -31,3 +31,10 @@ npm install
 # or
 yarn install
 ```
+### Run
+```bash
+npm run dev
+# or
+npm serve
+#to run the builded version
+```
