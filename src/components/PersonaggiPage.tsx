@@ -250,7 +250,9 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
               />
             )}
 
-            {(selectedCharacter?.showSpells ?? true) && <Spells />}
+            {(selectedCharacter?.showSpells ?? true) && selectedCharacter && (
+            <Spells characterId={selectedCharacter.id} />
+            )}
           </div>
         </>
       ) : (

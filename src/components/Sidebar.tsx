@@ -39,21 +39,29 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
     addCharacter(newCharacter);
   };
 
+  // Updated import function to match CharacterMassImport logic
   const handleImportCharacter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
           const characterData = JSON.parse(e.target?.result as string);
-          addCharacter(characterData);
+          // Remove the id to generate a new one
+          const { id, ...characterWithoutId } = characterData;
+          addCharacter(characterWithoutId);
         } catch (error) {
           console.error('Error parsing character file:', error);
           alert('Invalid character file');
         }
       };
       reader.readAsText(file);
-    }
+    });
+    
+    // Reset the input to allow importing the same file again
+    event.target.value = '';
   };
 
   return (
@@ -116,12 +124,13 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               >
                 <label className="w-full flex items-center cursor-pointer">
                   <Upload size={16} className="mr-2" />
-                  Import Character
+                  Import Character(s)
                   <input 
                     type="file" 
                     accept=".json" 
                     onChange={handleImportCharacter} 
                     className="hidden"
+                    multiple
                   />
                 </label>
               </button>

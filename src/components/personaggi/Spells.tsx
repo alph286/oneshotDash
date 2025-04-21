@@ -15,49 +15,73 @@ interface SpellLevels {
   level9: SpellWithPrepared[];
 }
 
-function Spells() {
+// Default empty spells structure
+const emptySpells: SpellLevels = {
+  cantrips: [],
+  level1: [],
+  level2: [],
+  level3: [],
+  level4: [],
+  level5: [],
+  level6: [],
+  level7: [],
+  level8: [],
+  level9: []
+};
+
+interface SpellsProps {
+  characterId?: number;
+}
+
+function Spells({ characterId }: SpellsProps) {
   const { updateCharacter, characters } = useCharacterStore();
-  const [currentCharacterId] = useState(characters[0]?.id);
-  const currentCharacter = characters.find(c => c.id === currentCharacterId);
+  const currentCharacter = characterId 
+    ? characters.find(c => c.id === characterId)
+    : null;
+
+  console.log("Current character:", currentCharacter);
+  console.log("Character spells:", currentCharacter?.spells);
 
   // Initialize spells from character data or with empty arrays
   const [spells, setSpells] = useState<SpellLevels>(() => {
-    return currentCharacter?.spells || {
-      cantrips: [],
-      level1: [],
-      level2: [],
-      level3: [],
-      level4: [],
-      level5: [],
-      level6: [],
-      level7: [],
-      level8: [],
-      level9: []
-    };
+    return currentCharacter?.spells || {...emptySpells};
   });
 
   // Update spells when character changes
   useEffect(() => {
-    if (currentCharacter?.spells) {
-      setSpells(currentCharacter.spells);
+    if (currentCharacter) {
+      // Ensure all spell levels exist by merging with emptySpells
+      const characterSpells = currentCharacter.spells || {};
+      setSpells({
+        ...emptySpells,
+        ...characterSpells
+      });
+    } else {
+      setSpells({...emptySpells});
     }
   }, [currentCharacter]);
 
-  const handleSpellsChange = (level: string, newSpells: SpellWithPrepared[]) => {
+  const handleSpellsChange = (level: keyof SpellLevels, newSpells: SpellWithPrepared[]) => {
+    if (!currentCharacter) return;
+    
     setSpells(prev => {
       const updatedSpells = {
         ...prev,
         [level]: newSpells
       };
       
-      if (currentCharacterId) {
-        updateCharacter(currentCharacterId, { 
-          spells: updatedSpells
-        });
-      }
+      // Update character in store
+      updateCharacter(currentCharacter.id, { 
+        spells: updatedSpells
+      });
+      
       return updatedSpells;
     });
   };
+
+  if (!currentCharacter) {
+    return <div className="bg-zinc-800 p-4 rounded-lg mt-4">No character selected</div>;
+  }
 
   return (
     <div className="bg-zinc-800 p-4 rounded-lg mt-4">
@@ -65,52 +89,52 @@ function Spells() {
       <div className="grid grid-cols-4 gap-4">
         <SpellLevel 
           level="Cantrips" 
-          spells={spells.cantrips} 
+          spells={spells.cantrips || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('cantrips', newSpells)} 
         />
         <SpellLevel 
           level="Level 1" 
-          spells={spells.level1} 
+          spells={spells.level1 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level1', newSpells)} 
         />
         <SpellLevel 
           level="Level 2" 
-          spells={spells.level2} 
+          spells={spells.level2 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level2', newSpells)} 
         />
         <SpellLevel 
           level="Level 3" 
-          spells={spells.level3} 
+          spells={spells.level3 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level3', newSpells)} 
         />
         <SpellLevel 
           level="Level 4" 
-          spells={spells.level4} 
+          spells={spells.level4 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level4', newSpells)} 
         />
         <SpellLevel 
           level="Level 5" 
-          spells={spells.level5} 
+          spells={spells.level5 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level5', newSpells)} 
         />
         <SpellLevel 
           level="Level 6" 
-          spells={spells.level6} 
+          spells={spells.level6 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level6', newSpells)} 
         />
         <SpellLevel 
           level="Level 7" 
-          spells={spells.level7} 
+          spells={spells.level7 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level7', newSpells)} 
         />
         <SpellLevel 
           level="Level 8" 
-          spells={spells.level8} 
+          spells={spells.level8 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level8', newSpells)} 
         />
         <SpellLevel 
           level="Level 9" 
-          spells={spells.level9} 
+          spells={spells.level9 || []} 
           onSpellsChange={(newSpells) => handleSpellsChange('level9', newSpells)} 
         />
       </div>

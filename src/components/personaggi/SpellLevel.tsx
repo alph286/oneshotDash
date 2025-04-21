@@ -17,7 +17,10 @@ interface SpellLevelProps {
   onSpellsChange?: (spells: SpellWithPrepared[]) => void;
 }
 
-function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
+function SpellLevel({ level, spells = [], onSpellsChange }: SpellLevelProps) {
+  // Ensure spells is always an array
+  const safeSpells = Array.isArray(spells) ? spells : [];
+  
   const [isEditing, setIsEditing] = useState(false);
   const [showSpellModal, setShowSpellModal] = useState(false);
   const [selectedSpell, setSelectedSpell] = useState<Spell | null>(null);
@@ -29,10 +32,10 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
   };
 
   const handleAddSpell = (spell: Spell) => {
-    if (onSpellsChange && !spells.some(s => s.name === spell.name)) {
+    if (onSpellsChange && !safeSpells.some(s => s.name === spell.name)) {
       // Set cantrips to always be prepared
       const isPrepared = level === "Cantrips" ? true : false;
-      const newSpells = [...spells, { name: spell.name, prepared: isPrepared }];
+      const newSpells = [...safeSpells, { name: spell.name, prepared: isPrepared }];
       onSpellsChange(newSpells);
       console.log('Added spell:', spell.name);
     }
@@ -41,7 +44,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
 
   const handleTogglePrepared = (index: number) => {
     if (onSpellsChange && level !== "Cantrips") {
-      const newSpells = spells.map((spell, i) => 
+      const newSpells = safeSpells.map((spell, i) => 
         i === index ? { ...spell, prepared: !spell.prepared } : spell
       );
       onSpellsChange(newSpells);
@@ -50,7 +53,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
 
   const handleRemoveSpell = (index: number) => {
     if (onSpellsChange) {
-      const newSpells = spells.filter((_, i) => i !== index);
+      const newSpells = safeSpells.filter((_, i) => i !== index);
       onSpellsChange(newSpells);
     }
   };
@@ -62,7 +65,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
     }
   };
 
-  console.log('Current spells:', spells); // Debug log
+  console.log('Current spells:', safeSpells); // Debug log
 
   return (
     <div className="bg-zinc-700 p-4 rounded-lg shadow-md">
@@ -92,7 +95,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
         <div className="w-8"></div>
       </div>
 
-      {spells.map((spell, index) => (
+      {safeSpells.map((spell, index) => (
         <div key={index} className="flex items-center mb-2 gap-2">
           <div className="w-10 flex justify-center">
             <button
@@ -165,7 +168,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
           level={levelNumber}
           onSelect={handleAddSpell}
           onClose={() => setShowSpellModal(false)}
-          existingSpells={spells.map(spell => spell.name)}
+          existingSpells={safeSpells.map(spell => spell.name)}
         />
       )}
     </div>
