@@ -6,10 +6,14 @@ interface SpellChooseModalProps {
   level: number;
   onSelect: (spell: Spell) => void;
   onClose: () => void;
+  existingSpells?: string[]; // Add this prop to receive existing spells
 }
 
-export function SpellChooseModal({ level, onSelect, onClose }: SpellChooseModalProps) {
-  const allSpells = loadSpells().filter(spell => spell.level === level);
+export function SpellChooseModal({ level, onSelect, onClose, existingSpells = [] }: SpellChooseModalProps) {
+  // Filter spells by level and exclude already added spells
+  const allSpells = loadSpells()
+    .filter(spell => spell.level === level)
+    .filter(spell => !existingSpells.includes(spell.name));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -24,15 +28,19 @@ export function SpellChooseModal({ level, onSelect, onClose }: SpellChooseModalP
           </button>
         </div>
         <div className="max-h-[60vh] overflow-y-auto">
-          {allSpells.map((spell) => (
-            <div
-              key={spell.id}
-              onClick={() => onSelect(spell)}
-              className="cursor-pointer p-2 hover:bg-zinc-700 rounded-lg mb-1"
-            >
-              <p className="text-gray-300">{spell.name}</p>
-            </div>
-          ))}
+          {allSpells.length > 0 ? (
+            allSpells.map((spell) => (
+              <div
+                key={spell.id}
+                onClick={() => onSelect(spell)}
+                className="cursor-pointer p-2 hover:bg-zinc-700 rounded-lg mb-1"
+              >
+                <p className="text-gray-300">{spell.name}</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-400 text-center py-4">No additional spells available</p>
+          )}
         </div>
       </div>
     </div>

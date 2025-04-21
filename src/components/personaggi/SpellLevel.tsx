@@ -4,11 +4,17 @@ import { SpellChooseModal } from './SpellChooseModal';
 import { Spell } from '../../stores/spellStore';
 import { loadSpells } from '../../utils/loadSpells';
 import { Trash2 } from 'lucide-react';
+import { Check } from 'lucide-react';
+
+interface SpellWithPrepared {
+  name: string;
+  prepared: boolean;
+}
 
 interface SpellLevelProps {
   level: string;
-  spells: string[];
-  onSpellsChange?: (spells: string[]) => void;
+  spells: SpellWithPrepared[];
+  onSpellsChange?: (spells: SpellWithPrepared[]) => void;
 }
 
 function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
@@ -23,12 +29,23 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
   };
 
   const handleAddSpell = (spell: Spell) => {
-    if (onSpellsChange && !spells.includes(spell.name)) {
-      const newSpells = [...spells, spell.name];
+    if (onSpellsChange && !spells.some(s => s.name === spell.name)) {
+      // Set cantrips to always be prepared
+      const isPrepared = level === "Cantrips" ? true : false;
+      const newSpells = [...spells, { name: spell.name, prepared: isPrepared }];
       onSpellsChange(newSpells);
-      console.log('Added spell:', spell.name); // Debug log
+      console.log('Added spell:', spell.name);
     }
     setShowSpellModal(false);
+  };
+
+  const handleTogglePrepared = (index: number) => {
+    if (onSpellsChange && level !== "Cantrips") {
+      const newSpells = spells.map((spell, i) => 
+        i === index ? { ...spell, prepared: !spell.prepared } : spell
+      );
+      onSpellsChange(newSpells);
+    }
   };
 
   const handleRemoveSpell = (index: number) => {
@@ -67,15 +84,38 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
           </button>
         )}
       </div>
+      
+      {/* Headers */}
+      <div className="flex items-center mb-2 px-1">
+        <div className="w-10 text-xs font-bold text-amber-400 text-center">P</div>
+        <div className="flex-1 text-xs font-bold text-amber-400 pl-2">Spell</div>
+        <div className="w-8"></div>
+      </div>
+
       {spells.map((spell, index) => (
-        <div key={index} className="flex justify-between items-center mb-2">
+        <div key={index} className="flex items-center mb-2 gap-2">
+          <div className="w-10 flex justify-center">
+            <button
+              onClick={() => isEditing && level !== "Cantrips" && handleTogglePrepared(index)}
+              className={`w-5 h-5 rounded border ${
+                spell.prepared || level === "Cantrips"
+                  ? 'bg-amber-500 border-amber-500' + (isEditing && level !== "Cantrips" ? ' hover:bg-amber-600' : '')
+                  : 'bg-transparent border-gray-500' + (isEditing ? ' hover:border-amber-500' : '')
+              } flex items-center justify-center transition-colors focus:outline-none focus:ring-0 ${
+                isEditing && level !== "Cantrips" ? 'cursor-pointer' : 'cursor-default'
+              }`}
+              disabled={!isEditing || level === "Cantrips"}
+            >
+              {(spell.prepared || level === "Cantrips") && <Check size={14} className="text-zinc-900" />}
+            </button>
+          </div>
           <button
-            onClick={() => handleSpellClick(spell)}
-            className="text-gray-300 hover:text-amber-400 text-left"
+            onClick={() => handleSpellClick(spell.name)}
+            className="flex-1 text-gray-300 hover:text-amber-400 text-left pl-2"
           >
-            {spell}
+            {spell.name}
           </button>
-          <div className={isEditing ? 'visible' : 'invisible'}>
+          <div className={`w-8 flex justify-center ${isEditing ? 'visible' : 'invisible'}`}>
             <button
               onClick={() => handleRemoveSpell(index)}
               className="p-1 rounded hover:bg-zinc-600 transition-colors"
@@ -125,6 +165,7 @@ function SpellLevel({ level, spells, onSpellsChange }: SpellLevelProps) {
           level={levelNumber}
           onSelect={handleAddSpell}
           onClose={() => setShowSpellModal(false)}
+          existingSpells={spells.map(spell => spell.name)}
         />
       )}
     </div>

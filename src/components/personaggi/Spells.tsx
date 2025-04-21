@@ -1,26 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SpellLevel from './SpellLevel';
-import { useCharacterStore } from '../../stores/characterStore';
+import { useCharacterStore, SpellWithPrepared } from '../../stores/characterStore';
+
+interface SpellLevels {
+  cantrips: SpellWithPrepared[];
+  level1: SpellWithPrepared[];
+  level2: SpellWithPrepared[];
+  level3: SpellWithPrepared[];
+  level4: SpellWithPrepared[];
+  level5: SpellWithPrepared[];
+  level6: SpellWithPrepared[];
+  level7: SpellWithPrepared[];
+  level8: SpellWithPrepared[];
+  level9: SpellWithPrepared[];
+}
 
 function Spells() {
   const { updateCharacter, characters } = useCharacterStore();
   const [currentCharacterId] = useState(characters[0]?.id);
-  
-  // Initialize from character store
-  const [spells, setSpells] = useState(() => characters[0]?.spells || {
-    cantrips: [],
-    level1: [],
-    level2: [],
-    level3: [],
-    level4: [],
-    level5: [],
-    level6: [],
-    level7: [],
-    level8: [],
-    level9: []
+  const currentCharacter = characters.find(c => c.id === currentCharacterId);
+
+  // Initialize spells from character data or with empty arrays
+  const [spells, setSpells] = useState<SpellLevels>(() => {
+    return currentCharacter?.spells || {
+      cantrips: [],
+      level1: [],
+      level2: [],
+      level3: [],
+      level4: [],
+      level5: [],
+      level6: [],
+      level7: [],
+      level8: [],
+      level9: []
+    };
   });
 
-  const handleSpellsChange = (level: string, newSpells: string[]) => {
+  // Update spells when character changes
+  useEffect(() => {
+    if (currentCharacter?.spells) {
+      setSpells(currentCharacter.spells);
+    }
+  }, [currentCharacter]);
+
+  const handleSpellsChange = (level: string, newSpells: SpellWithPrepared[]) => {
     setSpells(prev => {
       const updatedSpells = {
         ...prev,
@@ -29,7 +52,7 @@ function Spells() {
       
       if (currentCharacterId) {
         updateCharacter(currentCharacterId, { 
-          spells: updatedSpells 
+          spells: updatedSpells
         });
       }
       return updatedSpells;

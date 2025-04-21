@@ -9,5 +9,10 @@
     "esModuleInterop": true,
     "module": "esnext", // Add this line
     "moduleResolution": "bundler",
-  }
+    "allowJs": false, // Ensure this is false
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"], // Only include TypeScript files
+  "exclude": ["**/*.js"] // Exclude JavaScript files
 }

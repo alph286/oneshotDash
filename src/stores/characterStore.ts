@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export interface SpellWithPrepared {
+  name: string;
+  prepared: boolean;
+}
+
 export interface Character {
   id: number;
   name: string;
@@ -43,16 +48,16 @@ export interface Character {
   showNotes?: boolean;
   showSpells?: boolean;
   spells?: {
-    cantrips: string[];
-    level1: string[];
-    level2: string[];
-    level3: string[];
-    level4: string[];
-    level5: string[];
-    level6: string[];
-    level7: string[];
-    level8: string[];
-    level9: string[];
+    cantrips: SpellWithPrepared[];
+    level1: SpellWithPrepared[];
+    level2: SpellWithPrepared[];
+    level3: SpellWithPrepared[];
+    level4: SpellWithPrepared[];
+    level5: SpellWithPrepared[];
+    level6: SpellWithPrepared[];
+    level7: SpellWithPrepared[];
+    level8: SpellWithPrepared[];
+    level9: SpellWithPrepared[];
   };
 }
 
