@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import HomePage from './components/HomePage'
 import Personaggi from './components/PersonaggiPage'
-import SettingsPage from './components/SettingsPage'
+import StoriaPage from './components/StoriaPage'
 import Sidebar from './components/Sidebar'
 import Toolbar from './components/Toolbar'
 import bgImage from './assets/bg.png'
@@ -26,7 +26,7 @@ function App() {
         >
           {currentPage === 'home' && <HomePage />}
           {currentPage.startsWith('character-') && <Personaggi selectedCharacterId={currentPage} />}
-          {currentPage === 'settings' && <SettingsPage />}
+          {currentPage === 'storia' && <StoriaPage />}
         </div>
       </div>
     </div>

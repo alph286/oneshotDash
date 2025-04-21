@@ -138,13 +138,13 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
           </div>
 
           <button 
-            onClick={() => setCurrentPage('settings')}
+            onClick={() => setCurrentPage('storia')}
             className={`w-full flex items-center p-3 mb-2 rounded-lg focus:outline-none ${
-              currentPage === 'settings' ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
+              currentPage === 'storia' ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
             }`}
           >
             <Settings size={20} className="mr-3" />
-            Settings
+            Storia
           </button>
         </nav>
       </div>
