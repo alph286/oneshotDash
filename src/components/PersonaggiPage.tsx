@@ -155,6 +155,15 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   // showNotes?: boolean;
   // showSpells?: boolean;
 
+  const handleToggleProficiencies = () => {
+    if (selectedCharacter) {
+      updateCharacter(selectedCharacter.id, {
+        ...selectedCharacter,
+        showProficiencies: !selectedCharacter.showProficiencies
+      });
+    }
+  };
+
   return (
     <div className="h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
@@ -168,6 +177,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             onDelete={handleDelete}
             onToggleNotes={handleToggleNotes}
             onToggleSpells={handleToggleSpells}
+            onToggleProficiencies={handleToggleProficiencies}
             onToggleMetric={() => {
               if (selectedCharacter) {
                 updateCharacter(selectedCharacter.id, {
@@ -178,16 +188,19 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             }}
             showNotes={selectedCharacter.showNotes ?? true}
             showSpells={selectedCharacter.showSpells ?? true}
+            showProficiencies={selectedCharacter.showProficiencies ?? true}
+          
+          
+        />
+        <div className="bg-zinc-900/50 p-6 rounded-lg">
+          <HeaderPg
+            character={isEditing ? editedCharacter! : selectedCharacter}
+            isEditing={isEditing}
+            onInputChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
-          <div className="bg-zinc-900/50 p-6 rounded-lg">
-            <HeaderPg
-              character={isEditing ? editedCharacter! : selectedCharacter}
-              isEditing={isEditing}
-              onInputChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-            />
-           
-            
+         
+         
 
             {/* Character Stats Section */}
             <div className="grid grid-cols-6 gap-4 mb-6">
@@ -260,12 +273,14 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             {/* Proficiencies & Saving Throws Section */}
             <div className="mb-6">
               
+              {(selectedCharacter?.showProficiencies ?? true) && (
               <ProficienciesAndST 
                 characterId={selectedCharacter?.id} 
                 isEditing={isEditing} 
                 onInputChange={handleInputChange}
                 editedValue={isEditing ? editedCharacter?.otherProficiencies : undefined}
               />
+              )}
             </div>
 
             {/* Notes Section */}

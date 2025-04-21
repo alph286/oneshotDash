@@ -103,6 +103,7 @@ export interface Character {
   historyProficiency?: boolean;
   historyMastery?: boolean;
   useMetric?: boolean; // Add this
+  showProficiencies?: boolean;
 }
 
 
