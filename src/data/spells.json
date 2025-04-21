@@ -22,5 +22,58 @@
     "level": 0,
     "name": "Luce",
     "imageUrl": "/images/spells/luce.jpg"
+  },
+  {
+  "id": "benedizione",
+  "level": 1, 
+  "name": "Benedizione",  
+  "imageUrl": "/images/spells/benedizione.jpg"
+  },  
+  {
+    "id": "cura-ferite",
+    "level": 1,
+    "name": "Cura ferite",
+    "imageUrl": "/images/spells/cura-ferite.jpg"
+  },
+  {
+    "id": "comando",
+    "level": 1,
+    "name": "Comando",
+    "imageUrl": "/images/spells/comando.jpg"
+  },
+  {
+    "id": "dardo-tracciante",
+    "level": 1,
+    "name": "Dardo tracciante",
+    "imageUrl": "/images/spells/dardo-tracciante.jpg"
+  },
+  {"id": "parola-guaritrice",
+  "level": 1,
+  "name": "Parola guaritrice",
+  "imageUrl": "/images/spells/parola-guaritrice.jpg"
+  },
+  {
+    "id": "scudo-della-fede",
+    "level": 1,
+    "name": "Scudo della fede",
+    "imageUrl": "/images/spells/scudo-della-fede.jpg"
+  },{
+    "id": "aiuto",
+    "level": 2, 
+    "name": "Aiuto",
+    "imageUrl": "/images/spells/aiuto.jpg"
+    },
+  {
+    "id": "silenzio",
+    "level": 2,
+    "name": "Silenzio",
+    "imageUrl": "/images/spells/silenzio.jpg"
+  }, 
+  {
+  "id":"cecita-sordita",
+  "level": 2, 
+  "name": "Cecita sordita",
+  "imageUrl": "/images/spells/cecita-sordita.jpg"
   }
+
 ]
