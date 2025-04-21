@@ -70,12 +70,21 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const addPhase = useStoriaStore(state => state.addPhase);
 
   const handleAddFase = () => {
+    // Find all used numbers
+    const usedNumbers = new Set(fasi.map(fase => fase.number));
+    
+    // Find the lowest available number starting from 1
+    let newNumber = 1;
+    while (usedNumbers.has(newNumber)) {
+      newNumber++;
+    }
+
     const newFase = {
-      number: fasi.length + 1,
-      title: `Fase ${fasi.length + 1}`,
+      number: newNumber,
+      title: `Fase ${newNumber}`,
       estimatedTime: '1 hour'
     };
-    addPhase(newFase); // This will automatically persist the new fase
+    addPhase(newFase);
   };
 
   const handleImportFase = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,17 +185,27 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               isStoriaMenuOpen ? 'max-h-96 mt-2' : 'max-h-0'
             }`}>
               {/* List of fasi */}
-              {fasi.map(fase => (
-                <button
-                  key={fase.id}
-                  onClick={() => setCurrentPage(`fase-${fase.id}`)}
-                  className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
-                    currentPage === `fase-${fase.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-                  }`}
-                >
-                  {fase.title}
-                </button>
-              ))}
+              {fasi
+                .slice()
+                .sort((a, b) => a.number - b.number)
+                .map(fase => (
+                  <button
+                    key={fase.id}
+                    onClick={() => setCurrentPage(`fase-${fase.id}`)}
+                    className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
+                      currentPage === `fase-${fase.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span>Fase {fase.number}</span>
+                      <span className={`text-xs ${
+                        currentPage === `fase-${fase.id}` ? 'text-zinc-900' : 'text-gray-400'
+                      }`}>
+                        {fase.title}
+                      </span>
+                    </div>
+                  </button>
+                ))}
               {/* Add Fase button */}
               <button
                 onClick={handleAddFase}
