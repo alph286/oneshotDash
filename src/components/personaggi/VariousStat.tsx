@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface VariousStatProps {
   initiative: number;
@@ -23,6 +23,25 @@ const VariousStat: React.FC<VariousStatProps> = ({
   onDarkvisionChange,
   onInspirationChange,
 }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const isInitialMount = useRef(true);
+  const prevUseMetric = useRef(useMetric); // Add this ref
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      prevUseMetric.current = useMetric; // Store initial value
+    } else {
+      // Only trigger animation if value actually changed
+      if (prevUseMetric.current !== useMetric) {
+        setIsAnimating(true);
+        const timer = setTimeout(() => setIsAnimating(false), 1000);
+        prevUseMetric.current = useMetric; // Update stored value
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [useMetric]);
+
   const formatDistance = (value: number) => {
     return `${value} ${useMetric ? 'm' : 'ft'}`;
   };
@@ -42,7 +61,8 @@ const VariousStat: React.FC<VariousStatProps> = ({
         </div>
         
         {/* Speed */}
-        <div className="bg-zinc-700 p-2 rounded-lg">
+        {/* Remove the key prop, apply animate-glow based on isAnimating state */}
+        <div className={`bg-zinc-700 p-2 rounded-lg ${isAnimating ? 'animate-glow' : ''}`}>
           <div className="text-sm text-gray-400 text-center mb-1">Speed</div>
           {isEditing ? (
             <input
@@ -60,7 +80,8 @@ const VariousStat: React.FC<VariousStatProps> = ({
         </div>
         
         {/* Darkvision */}
-        <div className="bg-zinc-700 p-2 rounded-lg">
+         {/* Remove the key prop, apply animate-glow based on isAnimating state */}
+        <div className={`bg-zinc-700 p-2 rounded-lg ${isAnimating ? 'animate-glow' : ''}`}>
           <div className="text-sm text-gray-400 text-center mb-1">Darkvision</div>
           {isEditing ? (
             <input

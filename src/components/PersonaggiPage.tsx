@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent as ReactKeyboardEvent } from 'react'; 
+import React, { useState, useEffect, KeyboardEvent as ReactKeyboardEvent } from 'react'; 
 import { useCharacterStore } from '../stores/characterStore';
 import { Pencil, Save, Trash2, Download } from 'lucide-react';
 import type { Character } from '../stores/characterStore';
@@ -163,7 +163,10 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
       });
     }
   };
-
+  // In the PersonaggiPage component, remove this effect:
+  useEffect(() => {
+    // Remove this empty effect completely
+  }, [selectedCharacter?.useMetric]);
   return (
     <div className="h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
