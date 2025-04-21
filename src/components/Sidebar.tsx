@@ -3,6 +3,7 @@ import { useCharacterStore } from '../stores/characterStore'
 import { Character } from '../stores/characterStore'; // Add this import
 import { useState } from 'react'
 import { Plus, Upload } from 'lucide-react'
+import { useStoriaStore } from '../stores/storiaStore';
 
 interface SidebarProps {
   currentPage: string
@@ -13,6 +14,8 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const characters = useCharacterStore(state => state.characters);
   const addCharacter = useCharacterStore(state => state.addCharacter);
   const [isCharacterMenuOpen, setIsCharacterMenuOpen] = useState(false);
+  const [isStoriaMenuOpen, setIsStoriaMenuOpen] = useState(false);
+  const fasi = useStoriaStore(state => state.phases);
 
   const handleAddCharacter = () => {
     const newCharacter: Omit<Character, 'id'> = {
@@ -62,6 +65,21 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
     
     // Reset the input to allow importing the same file again
     event.target.value = '';
+  };
+
+  const addPhase = useStoriaStore(state => state.addPhase);
+
+  const handleAddFase = () => {
+    const newFase = {
+      number: fasi.length + 1,
+      title: `Fase ${fasi.length + 1}`,
+      estimatedTime: '1 hour'
+    };
+    addPhase(newFase); // This will automatically persist the new fase
+  };
+
+  const handleImportFase = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Add your logic for importing fasi
   };
 
   return (
@@ -137,15 +155,64 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
             </div>
           </div>
 
-          <button 
-            onClick={() => setCurrentPage('storia')}
-            className={`w-full flex items-center p-3 mb-2 rounded-lg focus:outline-none ${
-              currentPage === 'storia' ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-            }`}
-          >
-            <Settings size={20} className="mr-3" />
-            Storia
-          </button>
+          {/* Storia section with collapsible sub-items */}
+          <div className="mb-2">
+            <button 
+              onClick={() => setIsStoriaMenuOpen(!isStoriaMenuOpen)}
+              className={`w-full flex items-center p-3 rounded-lg focus:outline-none ${
+                currentPage.startsWith('fase-') ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-900/50 text-gray-400'
+              }`}
+            >
+              <Settings size={20} className="mr-3" />
+              <span>Storia</span>
+              <ChevronDown 
+                size={16} 
+                className={`ml-auto transition-transform duration-200 ${
+                  isStoriaMenuOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+            <div className={`overflow-hidden transition-all duration-200 ${
+              isStoriaMenuOpen ? 'max-h-96 mt-2' : 'max-h-0'
+            }`}>
+              {/* List of fasi */}
+              {fasi.map(fase => (
+                <button
+                  key={fase.id}
+                  onClick={() => setCurrentPage(`fase-${fase.id}`)}
+                  className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
+                    currentPage === `fase-${fase.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
+                  }`}
+                >
+                  {fase.title}
+                </button>
+              ))}
+              {/* Add Fase button */}
+              <button
+                onClick={handleAddFase}
+                className="w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+              >
+                <Plus size={16} className="mr-2" />
+                Add Fase
+              </button>
+              {/* Import Fase button */}
+              <button
+                className="w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+              >
+                <label className="w-full flex items-center cursor-pointer">
+                  <Upload size={16} className="mr-2" />
+                  Import Fase
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    onChange={handleImportFase} 
+                    className="hidden"
+                    multiple
+                  />
+                </label>
+              </button>
+            </div>
+          </div>
         </nav>
       </div>
     </div>

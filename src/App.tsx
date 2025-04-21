@@ -13,24 +13,24 @@ function App() {
   return (
     <div className="flex min-h-screen h-screen overflow-hidden bg-black text-gray-300">
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      
       <div className="flex-1 flex flex-col">
         <Toolbar />
-        <div
-          className="flex-1 overflow-y-auto scrollbar-auto bg-zinc-950 content-wrapper"
-          style={{
-            backgroundImage: currentPage === 'home' ? `url(${bgImage})` : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
+        <div className="flex-1 overflow-y-auto scrollbar-auto bg-zinc-950 content-wrapper">
           {currentPage === 'home' && <HomePage />}
           {currentPage.startsWith('character-') && <Personaggi selectedCharacterId={currentPage} />}
-          {currentPage === 'storia' && <StoriaPage />}
+          {currentPage.startsWith('fase-') && (
+            <StoriaPage 
+              selectedFaseId={currentPage.replace('fase-', '')}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+          {currentPage === 'storia' && (
+            <StoriaPage setCurrentPage={setCurrentPage} />
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
