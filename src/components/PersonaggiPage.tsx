@@ -10,6 +10,7 @@ import ToolbarPg from './personaggi/ToolbarPg';
 import HeaderPg from './personaggi/HeaderPg';
 import NotesPg from './personaggi/NotesPg';
 import Spells from './personaggi/Spells';
+import ProficienciesAndST from './personaggi/ProficienciesAndST';
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -67,6 +68,15 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
         // Set the additional bonus value from our bonuses state
         if (bonuses[field] !== undefined) {
           (updatedCharacter as any)[additionalBonusField] = bonuses[field];
+        }
+      });
+      
+      // Ensure we're preserving all proficiency and mastery fields from the original character
+      // This ensures we don't lose any proficiency changes made during editing
+      Object.keys(selectedCharacter).forEach(key => {
+        if (key.endsWith('Proficiency') || key.endsWith('Mastery')) {
+          // Use type assertion to avoid TypeScript errors
+          (updatedCharacter as any)[key] = (selectedCharacter as any)[key];
         }
       });
       
@@ -240,8 +250,18 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
 
            
 
+            {/* Proficiencies & Saving Throws Section */}
+            <div className="mb-6">
+              
+              <ProficienciesAndST 
+                characterId={selectedCharacter?.id} 
+                isEditing={isEditing} 
+                onInputChange={handleInputChange}
+                editedValue={isEditing ? editedCharacter?.otherProficiencies : undefined}
+              />
+            </div>
+
             {/* Notes Section */}
-            
             {(selectedCharacter?.showNotes ?? true) && (
               <NotesPg
                 character={isEditing ? editedCharacter! : selectedCharacter}

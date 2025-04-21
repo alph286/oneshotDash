@@ -47,6 +47,7 @@ export interface Character {
   inspiration?: number;
   showNotes?: boolean;
   showSpells?: boolean;
+  otherProficiencies?: string;
   spells?: {
     cantrips: SpellWithPrepared[];
     level1: SpellWithPrepared[];
@@ -59,6 +60,42 @@ export interface Character {
     level8: SpellWithPrepared[];
     level9: SpellWithPrepared[];
   };
+  acrobaticsProficiency?: boolean;
+  acrobaticsMastery?: boolean;
+  animalHandlingProficiency?: boolean;
+  animalHandlingMastery?: boolean;
+  arcanaProficiency?: boolean;
+  arcanaMastery?: boolean;
+  athleticsProficiency?: boolean;
+  athleticsMastery?: boolean;
+  stealthProficiency?: boolean;
+  stealthMastery?: boolean;
+  investigationProficiency?: boolean;
+  investigationMastery?: boolean;
+  deceptionProficiency?: boolean;
+  deceptionMastery?: boolean;
+  intimidationProficiency?: boolean;
+  intimidationMastery?: boolean;
+  performanceProficiency?: boolean;
+  performanceMastery?: boolean;
+  insightProficiency?: boolean;
+  insightMastery?: boolean;
+  medicineProficiency?: boolean;
+  medicineMastery?: boolean;
+  natureProficiency?: boolean;
+  natureMastery?: boolean;
+  perceptionProficiency?: boolean;
+  perceptionMastery?: boolean;
+  persuasionProficiency?: boolean;
+  persuasionMastery?: boolean;
+  sleightOfHandProficiency?: boolean;
+  sleightOfHandMastery?: boolean;
+  religionProficiency?: boolean;
+  religionMastery?: boolean;
+  survivalProficiency?: boolean;
+  survivalMastery?: boolean;
+  historyProficiency?: boolean;
+  historyMastery?: boolean;
 }
 
 
