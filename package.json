@@ -5,7 +5,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "serve": "concurrently \"npm run dev\""
+    "serve": "serve -s dist --single"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.7",

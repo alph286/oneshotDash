@@ -6,6 +6,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "module": "esnext", // Add this line
+    "moduleResolution": "bundler",
   }
 }
