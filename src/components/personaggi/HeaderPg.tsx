@@ -10,7 +10,7 @@ interface HeaderPgProps {
 
 function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgProps) {
   return (
-    <div className={`grid ${isEditing ? 'grid-cols-[150px_minmax(400px,1fr)_150px]' : 'grid-cols-[min-content_min-content_min-content]'} gap-6 mb-6 pb-4 border-b border-gray-700 whitespace-nowrap`}>
+    <div className={`grid ${isEditing ? 'grid-cols-[150px_minmax(400px,1fr)_150px_150px_150px]' : 'grid-cols-[min-content_min-content_min-content_min-content_min-content]'} gap-6 mb-6 pb-4 border-b border-gray-700 whitespace-nowrap`}>
       {/* Level Section */}
       <div className={`text-center ${isEditing ? 'w-full' : 'w-min'}`}>
         {isEditing ? (
@@ -88,6 +88,46 @@ function HeaderPg({ character, isEditing, onInputChange, onKeyPress }: HeaderPgP
           <>
             <p className="text-gray-400">Proficiency Bonus</p>
             <p className="text-3xl text-amber-500">+{character.proficiencyBonus}</p>
+          </>
+        )}
+      </div>
+
+      {/* Spell DC Section */}
+      <div className={`text-left ${isEditing ? 'w-full' : 'w-min'}`}>
+        {isEditing ? (
+          <div className="space-y-3">
+            <label className="block text-sm text-gray-400 mb-1">Spell DC</label>
+            <input
+              type="number"
+              value={character.spellDC || 0}
+              onChange={(e) => onInputChange('spellDC', parseInt(e.target.value))}
+              className="bg-zinc-700 rounded px-2 py-1 w-20"
+            />
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-400">Spell DC</p>
+            <p className="text-3xl text-amber-500">{character.spellDC}</p>
+          </>
+        )}
+      </div>
+
+      {/* Spell ToHit Section */}
+      <div className={`text-left ${isEditing ? 'w-full' : 'w-min'}`}>
+        {isEditing ? (
+          <div className="space-y-3">
+            <label className="block text-sm text-gray-400 mb-1">Spell ToHit</label>
+            <input
+              type="number"
+              value={character.spellToHit || 0}
+              onChange={(e) => onInputChange('spellToHit', parseInt(e.target.value))}
+              className="bg-zinc-700 rounded px-2 py-1 w-20"
+            />
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-400">Spell ToHit</p>
+            <p className="text-3xl text-amber-500">+{character.spellToHit}</p>
           </>
         )}
       </div>

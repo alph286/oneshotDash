@@ -1,31 +1,32 @@
 import React from 'react';
 
 interface VariousStatProps {
-  // Remove dexterityTotalBonus
-  initiative: number; // This now represents the total dexterity bonus
+  initiative: number;
   speed: number;
   darkvision: number;
   inspiration: number;
   isEditing: boolean;
-  // Remove onInitiativeChange
+  useMetric: boolean; // Add this prop
   onSpeedChange: (value: number) => void;
   onDarkvisionChange: (value: number) => void;
   onInspirationChange: (value: number) => void;
 }
 
 const VariousStat: React.FC<VariousStatProps> = ({
-  initiative, // Use initiative directly
+  initiative,
   speed,
   darkvision,
   inspiration,
   isEditing,
+  useMetric,
   onSpeedChange,
   onDarkvisionChange,
   onInspirationChange,
 }) => {
-  // Remove internal initiative calculation
-  // const totalInitiative = dexterityTotalBonus + initiative; 
-  
+  const formatDistance = (value: number) => {
+    return `${value} ${useMetric ? 'm' : 'ft'}`;
+  };
+
   return (
     <div className="bg-zinc-800 p-4 rounded-lg">
       <h3 className="text-lg font-bold text-amber-500 mb-3">Character Stats</h3>
@@ -46,13 +47,14 @@ const VariousStat: React.FC<VariousStatProps> = ({
           {isEditing ? (
             <input
               type="number"
+              step="0.1"
               value={speed}
-              onChange={(e) => onSpeedChange(parseInt(e.target.value) || 0)}
+              onChange={(e) => onSpeedChange(parseFloat(e.target.value) || 0)}
               className="w-full bg-zinc-600 text-center rounded px-2 py-1"
             />
           ) : (
             <div className="text-xl font-bold text-amber-500 text-center">
-              {speed} ft
+              {formatDistance(speed)}
             </div>
           )}
         </div>
@@ -63,13 +65,14 @@ const VariousStat: React.FC<VariousStatProps> = ({
           {isEditing ? (
             <input
               type="number"
+              step="0.1"
               value={darkvision}
-              onChange={(e) => onDarkvisionChange(parseInt(e.target.value) || 0)}
+              onChange={(e) => onDarkvisionChange(parseFloat(e.target.value) || 0)}
               className="w-full bg-zinc-600 text-center rounded px-2 py-1"
             />
           ) : (
             <div className="text-xl font-bold text-amber-500 text-center">
-              {darkvision > 0 ? `${darkvision} ft` : "None"}
+              {darkvision > 0 ? formatDistance(darkvision) : "None"}
             </div>
           )}
         </div>

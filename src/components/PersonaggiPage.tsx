@@ -161,12 +161,21 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
         <>
           <ToolbarPg
             isEditing={isEditing}
+            useMetric={selectedCharacter?.useMetric ?? false}
             onEdit={handleEdit}
             onSave={handleSave}
             onExport={handleExportCharacter}
             onDelete={handleDelete}
             onToggleNotes={handleToggleNotes}
             onToggleSpells={handleToggleSpells}
+            onToggleMetric={() => {
+              if (selectedCharacter) {
+                updateCharacter(selectedCharacter.id, {
+                  ...selectedCharacter,
+                  useMetric: !selectedCharacter.useMetric
+                });
+              }
+            }}
             showNotes={selectedCharacter.showNotes ?? true}
             showSpells={selectedCharacter.showSpells ?? true}
           />
@@ -231,16 +240,14 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                 
               
               <VariousStat
-                // Remove dexterityTotalBonus prop - This comment seems outdated now, let's remove it.
                 initiative={isEditing 
-                  // Use the initiative value directly from the edited character state
                   ? (editedCharacter?.initiative ?? 0) 
-                  : selectedCharacter.initiative} 
+                  : selectedCharacter.initiative}
                 speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
                 darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
                 inspiration={isEditing ? (editedCharacter?.inspiration || 0) : selectedCharacter.inspiration}
                 isEditing={isEditing}
-                // Remove onInitiativeChange prop
+                useMetric={selectedCharacter.useMetric ?? false} // Add this
                 onSpeedChange={(value) => handleInputChange('speed', value)}
                 onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
                 onInspirationChange={(value) => handleInputChange('inspiration', value)}

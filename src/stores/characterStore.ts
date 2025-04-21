@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// Add this helper function at the top of the file, after the imports
+const calculateBonus = (value: number): number => Math.floor((value - 10) / 2);
+
+
 export interface SpellWithPrepared {
   name: string;
   prepared: boolean;
@@ -14,6 +18,8 @@ export interface Character {
   level: number;
   alignment: string;
   proficiencyBonus: number;
+  spellDC?: number;  // Add this
+  spellToHit?: number;  // Add this
   strength: number;
   strengthBonus?: number; // Base bonus derived from strength
   strengthAdditionalBonus?: number; // User-added bonus
@@ -96,6 +102,7 @@ export interface Character {
   survivalMastery?: boolean;
   historyProficiency?: boolean;
   historyMastery?: boolean;
+  useMetric?: boolean; // Add this
 }
 
 
@@ -104,10 +111,8 @@ interface CharacterStore {
   addCharacter: (character: Omit<Character, 'id'>) => void;
   updateCharacter: (id: number, updatedData: Partial<Character>) => void;
   deleteCharacter: (id: number) => void;
+  toggleMetric: (id: number) => void; // Add this
 }
-
-// Helper function to calculate bonus
-const calculateBonus = (value: number): number => Math.floor((value - 10) / 2);
 
 export const useCharacterStore = create<CharacterStore>()(
   persist(
@@ -173,9 +178,17 @@ export const useCharacterStore = create<CharacterStore>()(
           characters: state.characters.filter((char) => char.id !== id),
         }));
       },
+      toggleMetric: (id) => {
+        set((state) => ({
+          characters: state.characters.map((char) => 
+            char.id === id ? { ...char, useMetric: !char.useMetric } : char
+          )
+        }));
+      },
     }),
     {
-      name: 'character-storage', // name of the item in the storage (must be unique)
+      name: 'character-storage',
     }
   )
 );
+

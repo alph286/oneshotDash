@@ -1,25 +1,29 @@
-import { Pencil, Save, Trash2, Download, Book, Wand2 } from 'lucide-react';
+import { Pencil, Save, Trash2, Download, Book, Wand2, Ruler } from 'lucide-react';
 
 interface ToolbarPgProps {
   isEditing: boolean;
+  useMetric: boolean; // Add this
   onEdit: () => void;
-  onSave: React.MouseEventHandler<HTMLButtonElement>; // Fix the type here
+  onSave: React.MouseEventHandler<HTMLButtonElement>;
   onExport: () => void;
   onDelete: () => void;
   onToggleNotes: () => void;
   onToggleSpells: () => void;
+  onToggleMetric: () => void; // Add this
   showNotes: boolean;
   showSpells: boolean;
 }
 
 function ToolbarPg({ 
-  isEditing, 
-  onEdit, 
-  onSave, 
-  onExport, 
+  isEditing,
+  useMetric,
+  onEdit,
+  onSave,
+  onExport,
   onDelete,
   onToggleNotes,
   onToggleSpells,
+  onToggleMetric,
   showNotes,
   showSpells
 }: ToolbarPgProps) {
@@ -42,6 +46,14 @@ function ToolbarPg({
         >
           <Wand2 size={20} className={`${showSpells ? 'text-blue-200' : 'text-blue-300'}`} />
         </button>
+        <button
+          onClick={onToggleMetric}
+          className={`p-2 rounded-lg transition-colors focus:outline-none ${
+            useMetric ? 'bg-green-800 hover:bg-green-700' : 'bg-zinc-800 hover:bg-zinc-700'
+          }`}
+        >
+          <Ruler size={20} className={`${useMetric ? 'text-green-300' : 'text-green-500'}`} />
+         </button>
       </div>
       
       <div className="flex gap-2">
