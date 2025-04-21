@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ToolbarStoria from './storia/ToolbarStoria';
 import { useStoriaStore } from '../stores/storiaStore';
 import { Phase } from '../stores/storiaStore';
+import HeaderStoria from './storia/HeaderStoria';
 interface StoriaPageProps {
   selectedFaseId?: string;
   setCurrentPage: (page: string) => void; // Add this
@@ -36,6 +37,12 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
     }
   };
 
+  const handleEditChange = (field: keyof Phase, value: string | number) => {
+    if (editedFase) {
+      setEditedFase({...editedFase, [field]: value});
+    }
+  };
+
   if (!currentFase) {
     return (
       <div>
@@ -54,30 +61,12 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
         onExport={handleExport}
         onDelete={handleDelete}
       />
-      <div className="bg-zinc-900/50 p-6 rounded-lg">
-        <h1 className="text-4xl font-bold text-amber-500 mb-6 text-left">
-          {isEditing ? (
-            <input
-              value={editedFase?.title || ''}
-              onChange={(e) => setEditedFase({...editedFase!, title: e.target.value})}
-              className="bg-zinc-800 text-amber-500 p-2 rounded-lg w-full"
-            />
-          ) : (
-            currentFase.title
-          )}
-        </h1>
-        <p className="text-gray-300 text-left">
-          {isEditing ? (
-            <input
-              value={editedFase?.estimatedTime || ''}
-              onChange={(e) => setEditedFase({...editedFase!, estimatedTime: e.target.value})}
-              className="bg-zinc-800 text-gray-300 p-2 rounded-lg w-full"
-            />
-          ) : (
-            currentFase.estimatedTime
-          )}
-        </p>
-      </div>
+      <HeaderStoria
+        fase={currentFase}
+        isEditing={isEditing}
+        editedFase={editedFase}
+        onEditChange={handleEditChange}
+      />
     </div>
   );
 }
