@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface Event {
   id: string;
@@ -7,7 +8,7 @@ interface Event {
   timestamp: Date;
 }
 
-interface Phase {
+export interface Phase {
   id: string;
   number: number;
   title: string;
@@ -25,46 +26,65 @@ interface StoriaState {
   updateEvent: (phaseId: string, eventId: string, update: Partial<Omit<Event, 'id'>>) => void;
 }
 
-export const useStoriaStore = create<StoriaState>((set) => ({
-  phases: [],
-  addPhase: (phase) => set((state) => ({
-    phases: [...state.phases, {
-      ...phase,
-      id: crypto.randomUUID(),
-      events: []
-    }]
-  })),
-  removePhase: (id) => set((state) => ({
-    phases: state.phases.filter(phase => phase.id !== id)
-  })),
-  addEvent: (phaseId, event) => set((state) => ({
-    phases: state.phases.map(phase => phase.id === phaseId ? {
-      ...phase,
-      events: [...phase.events, {
-        ...event,
-        id: crypto.randomUUID()
-      }]
-    } : phase)
-  })),
-  removeEvent: (phaseId, eventId) => set((state) => ({
-    phases: state.phases.map(phase => phase.id === phaseId ? {
-      ...phase,
-      events: phase.events.filter(event => event.id !== eventId)
-    } : phase)
-  })),
-  updatePhase: (id, update) => set((state) => ({
-    phases: state.phases.map(phase => phase.id === id ? {
-      ...phase,
-      ...update
-    } : phase)
-  })),
-  updateEvent: (phaseId, eventId, update) => set((state) => ({
-    phases: state.phases.map(phase => phase.id === phaseId ? {
-      ...phase,
-      events: phase.events.map(event => event.id === eventId ? {
-        ...event,
-        ...update
-      } : event)
-    } : phase)
-  }))
-}));
+export const useStoriaStore = create<StoriaState>()(
+  persist(
+    (set) => ({
+      phases: [],
+      addPhase: (phase) => set((state) => ({
+        phases: [...state.phases, {
+          ...phase,
+          id: crypto.randomUUID(),
+          events: []
+        }]
+      })),
+      removePhase: (id) => set((state) => ({
+        phases: state.phases.filter(phase => phase.id !== id)
+      })),
+      addEvent: (phaseId, event) => set((state) => ({
+        phases: state.phases.map(phase => phase.id === phaseId ? {
+          ...phase,
+          events: [...phase.events, {
+            ...event,
+            id: crypto.randomUUID()
+          }]
+        } : phase)
+      })),
+      removeEvent: (phaseId, eventId) => set((state) => ({
+        phases: state.phases.map(phase => phase.id === phaseId ? {
+          ...phase,
+          events: phase.events.filter(event => event.id !== eventId)
+        } : phase)
+      })),
+      updatePhase: (id, update) => set((state) => ({
+        phases: state.phases.map(phase => phase.id === id ? {
+          ...phase,
+          ...update
+        } : phase)
+      })),
+      updateEvent: (phaseId, eventId, update) => set((state) => ({
+        phases: state.phases.map(phase => phase.id === phaseId ? {
+          ...phase,
+          events: phase.events.map(event => event.id === eventId ? {
+            ...event,
+            ...update
+          } : event)
+        } : phase)
+      }))
+    }),
+    {
+      name: 'storia-store',
+      storage: {
+        getItem: (name) => {
+          const value = localStorage.getItem(name);
+          return value ? JSON.parse(value) : null;
+        },
+        setItem: (name, value) => {
+          localStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
+        },
+      },
+    }
+  )
+);

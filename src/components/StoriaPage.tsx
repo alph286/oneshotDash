@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import ToolbarStoria from './storia/ToolbarStoria';
 import { useStoriaStore } from '../stores/storiaStore';
-import { useParams } from 'react-router-dom';
-
+import { Phase } from '../stores/storiaStore';
 interface StoriaPageProps {
   selectedFaseId?: string;
   setCurrentPage: (page: string) => void; // Add this
@@ -13,10 +12,22 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   const fasi = useStoriaStore(state => state.phases);
   const currentFase = fasi.find(fase => fase.id === selectedFaseId);
   const removePhase = useStoriaStore(state => state.removePhase);
-  // Remove this line: const { setCurrentPage } = useStoriaStore();
+  const updatePhase = useStoriaStore(state => state.updatePhase);
+  const [editedFase, setEditedFase] = useState<Phase | null>(null);
 
-  const handleEdit = () => setIsEditing(true);
-  const handleSave = () => setIsEditing(false);
+  const handleEdit = () => {
+    if (currentFase) {
+      setEditedFase({...currentFase});
+      setIsEditing(true);
+    }
+  };
+
+  const handleSave = () => {
+    if (editedFase && currentFase) {
+      updatePhase(currentFase.id, editedFase);
+      setIsEditing(false);
+    }
+  };
   const handleExport = () => console.log('Exporting storia...');
   const handleDelete = () => {
     if (currentFase && window.confirm(`Delete fase "${currentFase.title}"?`)) {
@@ -45,9 +56,27 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
       />
       <div className="bg-zinc-900/50 p-6 rounded-lg">
         <h1 className="text-4xl font-bold text-amber-500 mb-6 text-left">
-          {currentFase.title}
+          {isEditing ? (
+            <input
+              value={editedFase?.title || ''}
+              onChange={(e) => setEditedFase({...editedFase!, title: e.target.value})}
+              className="bg-zinc-800 text-amber-500 p-2 rounded-lg w-full"
+            />
+          ) : (
+            currentFase.title
+          )}
         </h1>
-        <p className="text-gray-300 text-left">{currentFase.estimatedTime}</p>
+        <p className="text-gray-300 text-left">
+          {isEditing ? (
+            <input
+              value={editedFase?.estimatedTime || ''}
+              onChange={(e) => setEditedFase({...editedFase!, estimatedTime: e.target.value})}
+              className="bg-zinc-800 text-gray-300 p-2 rounded-lg w-full"
+            />
+          ) : (
+            currentFase.estimatedTime
+          )}
+        </p>
       </div>
     </div>
   );
