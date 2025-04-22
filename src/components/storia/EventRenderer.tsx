@@ -14,10 +14,18 @@ interface EventRendererProps {
     description: string;
   };
   onEdit?: () => void;
+  onDelete?: () => void;
+  isEditing?: boolean;
   dragHandleProps?: any;
 }
 
-const EventRenderer: React.FC<EventRendererProps> = ({ event, onEdit, dragHandleProps }) => {
+const EventRenderer: React.FC<EventRendererProps> = ({ 
+  event, 
+  onEdit, 
+  onDelete,
+  isEditing,
+  dragHandleProps 
+}) => {
   // Create edit icon
   const editIcon = onEdit ? (
     <button 
@@ -45,55 +53,22 @@ const EventRenderer: React.FC<EventRendererProps> = ({ event, onEdit, dragHandle
     title: event.title,
     description: event.description,
     editIcon,
-    dragHandle
+    dragHandle,
+    onDelete,
+    isEditing
   };
 
   switch (event.type) {
     case 'narrative':
-      return (
-        <NarrativeEvent 
-          title={event.title} 
-          description={event.description} 
-          editIcon={editIcon}
-          dragHandle={dragHandle}
-        />
-      );
+      return <NarrativeEvent {...commonProps} />;
     case 'action':
-      return (
-        <ActionEvent 
-          title={event.title} 
-          description={event.description}
-          editIcon={editIcon}
-          dragHandle={dragHandle}
-        />
-      );
+      return <ActionEvent {...commonProps} />;
     case 'descriptive':
-      return (
-        <DescriptiveEvent 
-          title={event.title} 
-          description={event.description} 
-          editIcon={editIcon}
-          dragHandle={dragHandle}
-        />
-      );
+      return <DescriptiveEvent {...commonProps} />;
     case 'reminder':
-      return (
-        <ReminderEvent 
-          title={event.title} 
-          description={event.description} 
-          editIcon={editIcon}
-          dragHandle={dragHandle}
-        />
-      );
+      return <ReminderEvent {...commonProps} />;
     case 'loot':
-      return (
-        <LootEvent 
-          title={event.title} 
-          description={event.description} 
-          editIcon={editIcon}
-          dragHandle={dragHandle}
-        />
-      );
+      return <LootEvent {...commonProps} />;
     default:
       return null;
   }

@@ -28,6 +28,7 @@ interface StoriaState {
   removeEvent: (phaseId: string, eventId: string) => void;
   updatePhase: (id: string, update: Partial<Omit<Phase, 'id'>>) => void;
   updateEvent: (phaseId: string, eventId: string, update: Partial<Omit<Event, 'id'>>) => void;
+  deleteEvent: (phaseId: string, eventId: string) => void; // Add this line
 }
 
 export const useStoriaStore = create<StoriaState>()(
@@ -79,7 +80,22 @@ export const useStoriaStore = create<StoriaState>()(
             ...update
           } : event)
         } : phase)
-      }))
+      })),  // Added comma here
+      // Add this function to your store
+      deleteEvent: (phaseId: string, eventId: string) => 
+        set((state) => {
+          const updatedPhases = state.phases.map(phase => {
+            if (phase.id === phaseId) {
+              return {
+                ...phase,
+                events: phase.events?.filter(event => event.id !== eventId) || []
+              };
+            }
+            return phase;
+          });
+          
+          return { phases: updatedPhases };
+        }),
     }),
     {
       name: 'storia-store',

@@ -22,6 +22,7 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   const [editedFase, setEditedFase] = useState<Phase | null>(null);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const updateEvent = useStoriaStore(state => state.updateEvent);
+  const deleteEvent = useStoriaStore(state => state.deleteEvent);
 
   const handleEdit = () => {
     if (currentFase) {
@@ -134,6 +135,13 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
     );
   }
 
+  // Handle event delete
+  const handleEventDelete = (eventId: string) => {
+    if (currentFase && window.confirm('Are you sure you want to delete this event?')) {
+      deleteEvent(currentFase.id, eventId);
+    }
+  };
+
   return (
     <div>
       <ToolbarStoria
@@ -191,6 +199,8 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
                                 key={event.id} 
                                 event={event} 
                                 onEdit={() => handleEventEdit(event.id)}
+                                onDelete={() => handleEventDelete(event.id)}
+                                isEditing={editingEventId === event.id}
                                 dragHandleProps={provided.dragHandleProps}
                               />
                             )}

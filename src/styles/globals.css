@@ -1,0 +1,33 @@
+/* WYSIWYG Editor Styles */
+.wysiwyg-container {
+  width: 100%;
+}
+
+.wysiwyg-container .rsw-editor {
+  background-color: #3f3f46;
+  color: #e4e4e7;
+  min-height: 400px;
+}
+
+.wysiwyg-container .rsw-toolbar {
+  background-color: #27272a;
+  border-bottom: 1px solid #52525b;
+}
+
+.wysiwyg-container .rsw-btn {
+  color: #e4e4e7;
+}
+.wysiwyg-container .rsw-toolbar .rsw-dd {
+  background-color: #27272a;
+  color: #e4e4e7;
+  border: 1px solid #52525b;
+}
+.wysiwyg-container .rsw-btn:hover {
+  background-color: #52525b;
+}
+
+.wysiwyg-container .rsw-dropdown {
+  background-color: #27272a;
+  color: #e4e4e7;
+  border: 1px solid #52525b;
+}

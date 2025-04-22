@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, Sword, FileText, Bell, Gem, Save, X } from 'lucide-react';
+import Editor from 'react-simple-wysiwyg';
 
 interface Event {
   id: string;
@@ -20,6 +21,10 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
 
   const handleSave = () => {
     onSave({ title, description });
+  };
+
+  const handleEditorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
   };
 
   // Get icon and color based on event type
@@ -69,12 +74,17 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
       
       {/* Only show description field for events that need it */}
       {event.type !== 'action' && (
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full bg-zinc-700 text-gray-200 p-3 rounded-lg min-h-[400px]"
-          placeholder="Descrizione evento"
-        />
+        <div className="wysiwyg-container">
+          <Editor 
+          
+            value={description}
+            onChange={handleEditorChange}
+            containerProps={{
+              className: "w-full bg-zinc-700 text-gray-200 text-left rounded-lg min-h-[400px]",
+              style: {resize: 'vertical'}
+            }}
+          />
+        </div>
       )}
     </div>
   );
