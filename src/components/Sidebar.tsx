@@ -1,6 +1,6 @@
 import { Home, Users, Settings, ChevronDown } from 'lucide-react'
 import { useCharacterStore } from '../stores/characterStore'
-import { Character } from '../stores/characterStore'; // Add this import
+import { Character } from '../stores/characterStore';
 import { useState } from 'react'
 import { Plus, Upload } from 'lucide-react'
 import { useStoriaStore } from '../stores/storiaStore';
@@ -106,8 +106,10 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
 
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
-      <div className="text-xl font-bold mb-8 pl-4 text-gray-200">OS Manager</div>
-      <div className="flex-grow overflow-auto scrollbar-auto">
+      <div className="w-16 h-16 mb-8 flex items-center justify-center bg-zinc-900 rounded-lg">
+        <div className="text-xl font-bold text-gray-200">OS</div>
+      </div>
+      <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
         <nav>
           <button 
             onClick={() => !isEditing && setCurrentPage('home')}
@@ -139,7 +141,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               />
             </button>
             <div className={`overflow-hidden transition-all duration-200 ${
-              isCharacterMenuOpen ? 'max-h-96 mt-2' : 'max-h-0'
+              isCharacterMenuOpen ? 'mt-2' : 'max-h-0'
             }`}>
               {characters.map(character => (
                 <button
@@ -211,7 +213,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               />
             </button>
             <div className={`overflow-hidden transition-all duration-200 ${
-              isStoriaMenuOpen ? 'max-h-96 mt-2' : 'max-h-0'
+              isStoriaMenuOpen ? 'mt-2' : 'max-h-0'
             }`}>
               {/* List of fasi */}
               {fasi
