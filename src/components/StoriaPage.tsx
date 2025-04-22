@@ -3,9 +3,12 @@ import ToolbarStoria from './storia/ToolbarStoria';
 import { useStoriaStore } from '../stores/storiaStore';
 import { Phase } from '../stores/storiaStore';
 import HeaderStoria from './storia/HeaderStoria';
+import AddEventButton from './storia/AddEventButton';
+import EventRenderer from './storia/EventRenderer';
+
 interface StoriaPageProps {
   selectedFaseId?: string;
-  setCurrentPage: (page: string) => void; // Add this
+  setCurrentPage: (page: string) => void;
 }
 
 function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
@@ -55,6 +58,9 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
     );
   }
 
+  // Sort events by position
+  const sortedEvents = [...(currentFase.events || [])].sort((a, b) => a.position - b.position);
+
   return (
     <div>
       <ToolbarStoria
@@ -69,8 +75,31 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
         isEditing={isEditing}
         editedFase={editedFase}
         onEditChange={handleEditChange}
-        allFasi={fasi} // Add this
+        allFasi={fasi}
       />
+      
+      {/* Add Event Button */}
+      <div className="px-6 mt-6">
+        <AddEventButton phaseId={currentFase.id} />
+        
+        {/* Render Events */}
+        <div className="mt-6">
+          {sortedEvents.length === 0 ? (
+            <p className="text-gray-400 italic">Nessun evento. Aggiungi un evento per iniziare.</p>
+          ) : (
+            sortedEvents.map(event => (
+              <EventRenderer 
+                key={event.id} 
+                event={event} 
+                onEdit={() => {
+                  // Handle edit functionality here
+                  console.log('Edit event', event.id);
+                }} 
+              />
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

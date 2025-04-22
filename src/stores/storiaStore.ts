@@ -3,9 +3,11 @@ import { persist } from 'zustand/middleware';
 
 interface Event {
   id: string;
+  type: 'narrative' | 'action' | 'descriptive' | 'reminder' | 'loot';
   title: string;
   description: string;
   timestamp: Date;
+  position: number;
 }
 
 export interface Phase {
@@ -40,15 +42,21 @@ export const useStoriaStore = create<StoriaState>()(
       removePhase: (id) => set((state) => ({
         phases: state.phases.filter(phase => phase.id !== id)
       })),
-      addEvent: (phaseId, event) => set((state) => ({
-        phases: state.phases.map(phase => phase.id === phaseId ? {
-          ...phase,
-          events: [...phase.events, {
-            ...event,
-            id: crypto.randomUUID()
-          }]
-        } : phase)
-      })),
+      addEvent: (phaseId: string, event: Omit<Event, 'id'>) => set((state) => {
+        const phase = state.phases.find(p => p.id === phaseId);
+        const position = phase?.events.length || 0;
+        
+        return {
+          phases: state.phases.map(phase => phase.id === phaseId ? {
+            ...phase,
+            events: [...phase.events, {
+              ...event,
+              position: position, // Set the position based on current events length
+              id: crypto.randomUUID()
+            }]
+          } : phase)
+        };
+      }),
       removeEvent: (phaseId, eventId) => set((state) => ({
         phases: state.phases.map(phase => phase.id === phaseId ? {
           ...phase,
