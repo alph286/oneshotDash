@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Plus, Upload } from 'lucide-react'
 import { useStoriaStore } from '../stores/storiaStore';
 import { useEditModeStore } from '../stores/editModeStore';
+import BeholderBox from './ui/BeholderBox';
 
 interface SidebarProps {
   currentPage: string
@@ -106,9 +107,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
 
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
-      <div className="w-16 h-16 mb-8 flex items-center justify-center bg-zinc-900 rounded-lg">
-        <div className="text-xl font-bold text-gray-200">OS</div>
-      </div>
+      <BeholderBox />
       <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
         <nav>
           <button 

@@ -24,7 +24,7 @@ const NarrativeEvent: React.FC<NarrativeEventProps> = ({
           {dragHandle}
         </div>
       </div>
-      <p className="text-gray-300 whitespace-pre-wrap">{description}</p>
+      <blockquote className="text-gray-300 whitespace-pre-wrap text-left italic"><p>{description}</p></blockquote>
     </div>
   );
 };

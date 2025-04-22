@@ -9,8 +9,8 @@ function HomePage() {
     <div className="text-gray-300">
       {/* Title and Subtitle */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Il Cuore della Foresta</h1>
-        <p className="text-gray-400">OneShot Manager</p>
+        <h1 className="text-3xl font-bold mb-2">One Shot Manager</h1>
+        <p className="text-gray-400">v.0.2a</p>
       </div>
 
       {/* Cards Section */}
