@@ -5,6 +5,7 @@ import { Phase } from '../stores/storiaStore';
 import HeaderStoria from './storia/HeaderStoria';
 import AddEventButton from './storia/AddEventButton';
 import EventRenderer from './storia/EventRenderer';
+import EventEditor from './storia/EventEditor';
 
 interface StoriaPageProps {
   selectedFaseId?: string;
@@ -18,6 +19,8 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   const removePhase = useStoriaStore(state => state.removePhase);
   const updatePhase = useStoriaStore(state => state.updatePhase);
   const [editedFase, setEditedFase] = useState<Phase | null>(null);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const updateEvent = useStoriaStore(state => state.updateEvent);
 
   const handleEdit = () => {
     if (currentFase) {
@@ -61,6 +64,24 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   // Sort events by position
   const sortedEvents = [...(currentFase.events || [])].sort((a, b) => a.position - b.position);
 
+  // Handle event edit
+  const handleEventEdit = (eventId: string) => {
+    setEditingEventId(eventId);
+  };
+
+  // Handle event update
+  const handleEventUpdate = (eventId: string, updatedEvent: Partial<Event>) => {
+    if (currentFase) {
+      updateEvent(currentFase.id, eventId, updatedEvent);
+      setEditingEventId(null);
+    }
+  };
+
+  // Handle cancel event edit
+  const handleCancelEventEdit = () => {
+    setEditingEventId(null);
+  };
+
   return (
     <div>
       <ToolbarStoria
@@ -88,14 +109,20 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
             <p className="text-gray-400 italic">Nessun evento. Aggiungi un evento per iniziare.</p>
           ) : (
             sortedEvents.map(event => (
-              <EventRenderer 
-                key={event.id} 
-                event={event} 
-                onEdit={() => {
-                  // Handle edit functionality here
-                  console.log('Edit event', event.id);
-                }} 
-              />
+              editingEventId === event.id ? (
+                <EventEditor 
+                  key={event.id}
+                  event={event}
+                  onSave={(updatedEvent) => handleEventUpdate(event.id, updatedEvent)}
+                  onCancel={handleCancelEventEdit}
+                />
+              ) : (
+                <EventRenderer 
+                  key={event.id} 
+                  event={event} 
+                  onEdit={() => handleEventEdit(event.id)} 
+                />
+              )
             ))
           )}
         </div>
