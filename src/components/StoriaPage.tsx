@@ -108,9 +108,21 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   // Update the export function to include events
   const handleExport = () => {
     if (currentFase) {
+      // Sort events by position to ensure correct order
+      const sortedEvents = [...(currentFase.events || [])].sort((a, b) => a.position - b.position);
+      
       const exportData = {
-        ...currentFase,
-        events: sortedEvents
+        number: currentFase.number,
+        title: currentFase.title,
+        estimatedTime: currentFase.estimatedTime,
+        events: sortedEvents.map(event => ({
+          type: event.type,
+          title: event.title,
+          description: event.description,
+          position: event.position
+          // Non includiamo l'ID per generarne uno nuovo all'importazione
+          // Non includiamo timestamp perché verrà creato nuovo all'importazione
+        }))
       };
       
       const jsonString = JSON.stringify(exportData, null, 2);

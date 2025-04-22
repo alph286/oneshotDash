@@ -95,6 +95,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   };
 
   const addPhase = useStoriaStore(state => state.addPhase);
+  const addEvent = useStoriaStore(state => state.addEvent);
 
   const handleAddFase = () => {
     // Find all used numbers
@@ -115,7 +116,96 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   };
 
   const handleImportFase = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Add your logic for importing fasi
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const faseData = JSON.parse(e.target?.result as string);
+          console.log("Imported fase data:", faseData); // Debug log
+          
+          // Check if the imported data has the required fields
+          if (!faseData.number || !faseData.title) {
+            throw new Error('Invalid fase data: missing required fields');
+          }
+          
+          // Find all used numbers to avoid duplicates
+          const usedNumbers = new Set(fasi.map(fase => fase.number));
+          
+          // If the number is already used, find the next available number
+          let faseNumber = faseData.number;
+          while (usedNumbers.has(faseNumber)) {
+            faseNumber++;
+          }
+          
+          // Create a new fase object without the id to generate a new one
+          const newFase = {
+            number: faseNumber,
+            title: faseData.title,
+            estimatedTime: faseData.estimatedTime || 30
+          };
+          
+          // Add the fase
+          const phaseId = addPhase(newFase);
+          console.log("Added phase with ID:", phaseId); // Debug log
+          
+          // Check if there are events to import
+          if (faseData.events && Array.isArray(faseData.events) && faseData.events.length > 0) {
+            console.log(`Found ${faseData.events.length} events to import`); // Debug log
+            
+            // Get the latest state of phases
+            const currentPhases = useStoriaStore.getState().phases;
+            const addedPhase = currentPhases.find(fase => fase.number === faseNumber);
+            
+            if (addedPhase) {
+              console.log("Found added phase:", addedPhase); // Debug log
+              
+              // Sort events by position
+              const sortedEvents = [...faseData.events].sort((a, b) => 
+                (a.position !== undefined && b.position !== undefined) 
+                  ? a.position - b.position 
+                  : 0
+              );
+              
+              // Add each event to the phase
+              sortedEvents.forEach((event, index) => {
+                if (event.type && event.title && event.description) {
+                  const newEvent = {
+                    type: event.type,
+                    title: event.title,
+                    description: event.description,
+                    timestamp: new Date(),
+                    position: event.position !== undefined ? event.position : index
+                  };
+                  
+                  // Add the event to the fase
+                  addEvent(addedPhase.id, newEvent);
+                  console.log(`Added event: ${event.title} to phase ${faseNumber}`);
+                } else {
+                  console.warn('Skipping invalid event:', event);
+                }
+              });
+              
+              // Navigate to the newly imported phase
+              setCurrentPage(`fase-${addedPhase.id}`);
+            } else {
+              console.error('Could not find the newly added phase');
+            }
+          }
+          
+          alert(`Fase "${faseData.title}" imported successfully!`);
+        } catch (error) {
+          console.error('Error parsing fase file:', error);
+          alert('Invalid fase file');
+        }
+      };
+      reader.readAsText(file);
+    });
+    
+    // Reset the input to allow importing the same file again
+    event.target.value = '';
   };
 
   // Update the totalEstimatedTime calculation

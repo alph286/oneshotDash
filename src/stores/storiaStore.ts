@@ -35,13 +35,17 @@ export const useStoriaStore = create<StoriaState>()(
   persist(
     (set) => ({
       phases: [],
-      addPhase: (phase) => set((state) => ({
-        phases: [...state.phases, {
-          ...phase,
-          id: crypto.randomUUID(),
-          events: []
-        }]
-      })),
+      addPhase: (phase) => {
+        const id = crypto.randomUUID();
+        set((state) => ({
+          phases: [...state.phases, {
+            ...phase,
+            id,
+            events: []
+          }]
+        }));
+        return id;
+      },
       removePhase: (id) => set((state) => ({
         phases: state.phases.filter(phase => phase.id !== id)
       })),
