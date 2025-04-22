@@ -11,6 +11,7 @@ import HeaderPg from './personaggi/HeaderPg';
 import NotesPg from './personaggi/NotesPg';
 import Spells from './personaggi/Spells';
 import ProficienciesAndST from './personaggi/ProficienciesAndST';
+import { useEditModeStore } from '../stores/editModeStore'; // Add this import
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -19,8 +20,9 @@ interface PersonaggiPageProps {
 function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
   const characters = useCharacterStore(state => state.characters);
   const updateCharacter = useCharacterStore(state => state.updateCharacter);
-  const deleteCharacter = useCharacterStore(state => state.deleteCharacter); // Add this
+  const deleteCharacter = useCharacterStore(state => state.deleteCharacter);
   const [isEditing, setIsEditing] = useState(false);
+  const setGlobalEditMode = useEditModeStore(state => state.setEditMode); // Add this
   const [editedCharacter, setEditedCharacter] = useState<Character | null>(null);
   const [bonuses, setBonuses] = useState<Record<string, number>>({});
   
@@ -51,10 +53,10 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
       setBonuses(initialBonuses);
       
       setIsEditing(true);
+      setGlobalEditMode(true); // Add this line
     }
   };
 
-  // In the handleSave function, update how we handle the additional bonuses
   const handleSave = () => {
     if (editedCharacter && selectedCharacter) {
       // Create a copy of the edited character
@@ -83,6 +85,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
       // Save the character with the updated additional bonuses
       updateCharacter(selectedCharacter.id, updatedCharacter);
       setIsEditing(false);
+      setGlobalEditMode(false); // Add this line
       setBonuses({});
     }
   };

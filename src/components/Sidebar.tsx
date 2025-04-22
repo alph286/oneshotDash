@@ -4,6 +4,7 @@ import { Character } from '../stores/characterStore'; // Add this import
 import { useState } from 'react'
 import { Plus, Upload } from 'lucide-react'
 import { useStoriaStore } from '../stores/storiaStore';
+import { useEditModeStore } from '../stores/editModeStore';
 
 interface SidebarProps {
   currentPage: string
@@ -16,6 +17,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const [isCharacterMenuOpen, setIsCharacterMenuOpen] = useState(false);
   const [isStoriaMenuOpen, setIsStoriaMenuOpen] = useState(false);
   const fasi = useStoriaStore(state => state.phases);
+  const isEditing = useEditModeStore(state => state.isEditing);
 
   const handleAddCharacter = () => {
     const newCharacter: Omit<Character, 'id'> = {
@@ -108,10 +110,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
       <div className="flex-grow overflow-auto scrollbar-auto">
         <nav>
           <button 
-            onClick={() => setCurrentPage('home')}
+            onClick={() => !isEditing && setCurrentPage('home')}
             className={`w-full flex items-center p-3 mb-2 rounded-lg focus:outline-none ${
               currentPage === 'home' ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-            }`}
+            } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isEditing}
           >
             <Home size={20} className="mr-3" />
             Home
@@ -120,10 +123,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
           {/* Personaggi section with collapsible sub-items */}
           <div className="mb-2">
             <button 
-              onClick={() => setIsCharacterMenuOpen(!isCharacterMenuOpen)}
+              onClick={() => !isEditing && setIsCharacterMenuOpen(!isCharacterMenuOpen)}
               className={`w-full flex items-center p-3 rounded-lg focus:outline-none ${
                 currentPage.startsWith('character-') ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-900/50 text-gray-400'
-              }`}
+              } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={isEditing}
             >
               <Users size={20} className="mr-3" />
               <span>Personaggi</span>
@@ -140,35 +144,43 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               {characters.map(character => (
                 <button
                   key={character.id}
-                  onClick={() => setCurrentPage(`character-${character.id}`)}
+                  onClick={() => !isEditing && setCurrentPage(`character-${character.id}`)}
                   className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
                     currentPage === `character-${character.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-                  }`}
+                  } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={isEditing}
                 >
                   {character.name}
                 </button>
               ))}
               {/* Add the + button */}
               <button
-                onClick={handleAddCharacter}
-                className="w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+                onClick={() => !isEditing && handleAddCharacter()}
+                className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
               >
                 <Plus size={16} className="mr-2" />
                 Add Character
               </button>
               {/* Add Import Character button */}
               <button
-                className="w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+                className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
               >
-                <label className="w-full flex items-center cursor-pointer">
+                <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                   <Upload size={16} className="mr-2" />
                   Import Character(s)
                   <input 
                     type="file" 
                     accept=".json" 
-                    onChange={handleImportCharacter} 
+                    onChange={!isEditing ? handleImportCharacter : undefined} 
                     className="hidden"
                     multiple
+                    disabled={isEditing}
                   />
                 </label>
               </button>
@@ -178,10 +190,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
           {/* Storia section with collapsible sub-items */}
           <div className="mb-2">
             <button 
-              onClick={() => setIsStoriaMenuOpen(!isStoriaMenuOpen)}
+              onClick={() => !isEditing && setIsStoriaMenuOpen(!isStoriaMenuOpen)}
               className={`w-full flex items-center p-3 rounded-lg focus:outline-none ${
                 currentPage.startsWith('fase-') ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-900/50 text-gray-400'
-              }`}
+              } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={isEditing}
             >
               <Settings size={20} className="mr-3" />
               <span>Storia</span>
@@ -207,10 +220,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
                 .map(fase => (
                   <button
                     key={fase.id}
-                    onClick={() => setCurrentPage(`fase-${fase.id}`)}
+                    onClick={() => !isEditing && setCurrentPage(`fase-${fase.id}`)}
                     className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
                       currentPage === `fase-${fase.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-                    }`}
+                    } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={isEditing}
                   >
                     <div className="flex flex-col">
                       <span className='text-left'>Fase {fase.number}</span>
@@ -224,25 +238,32 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
                 ))}
               {/* Add Fase button */}
               <button
-                onClick={handleAddFase}
-                className="w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+                onClick={() => !isEditing && handleAddFase()}
+                className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
               >
                 <Plus size={16} className="mr-2" />
                 Add Fase
               </button>
               {/* Import Fase button */}
               <button
-                className="w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none"
+                className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
               >
-                <label className="w-full flex items-center cursor-pointer">
+                <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                   <Upload size={16} className="mr-2" />
                   Import Fase
                   <input 
                     type="file" 
                     accept=".json" 
-                    onChange={handleImportFase} 
+                    onChange={!isEditing ? handleImportFase : undefined} 
                     className="hidden"
                     multiple
+                    disabled={isEditing}
                   />
                 </label>
               </button>
