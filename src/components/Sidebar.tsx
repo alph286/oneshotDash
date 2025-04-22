@@ -1,7 +1,7 @@
 import { Home, Users, Settings, ChevronDown } from 'lucide-react'
 import { useCharacterStore } from '../stores/characterStore'
 import { Character } from '../stores/characterStore';
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Plus, Upload } from 'lucide-react'
 import { useStoriaStore } from '../stores/storiaStore';
 import { useEditModeStore } from '../stores/editModeStore';
@@ -19,6 +19,30 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const [isStoriaMenuOpen, setIsStoriaMenuOpen] = useState(false);
   const fasi = useStoriaStore(state => state.phases);
   const isEditing = useEditModeStore(state => state.isEditing);
+  
+  // Add the missing ref and state for scrollbar detection
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const [hasScrollbar, setHasScrollbar] = useState(false);
+  
+  // Check if scrollbar is present
+  useEffect(() => {
+    const checkForScrollbar = () => {
+      if (navContainerRef.current) {
+        const { scrollHeight, clientHeight } = navContainerRef.current;
+        setHasScrollbar(scrollHeight > clientHeight);
+      }
+    };
+    
+    // Check initially
+    checkForScrollbar();
+    
+    // Check when window resizes or content changes
+    window.addEventListener('resize', checkForScrollbar);
+    
+    return () => {
+      window.removeEventListener('resize', checkForScrollbar);
+    };
+  }, [isCharacterMenuOpen, isStoriaMenuOpen, characters.length, fasi.length]);
 
   const handleAddCharacter = () => {
     const newCharacter: Omit<Character, 'id'> = {
@@ -108,7 +132,10 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
       <BeholderBox />
-      <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
+      <div 
+        ref={navContainerRef}
+        className={`flex-grow overflow-y-auto custom-scrollbar ${hasScrollbar ? 'pr-2' : ''}`}
+      >
         <nav>
           <button 
             onClick={() => !isEditing && setCurrentPage('home')}

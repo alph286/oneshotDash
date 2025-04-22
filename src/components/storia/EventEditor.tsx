@@ -72,7 +72,7 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full bg-zinc-700 text-gray-200 p-3 rounded-lg min-h-[100px]"
+          className="w-full bg-zinc-700 text-gray-200 p-3 rounded-lg min-h-[400px]"
           placeholder="Descrizione evento"
         />
       )}
