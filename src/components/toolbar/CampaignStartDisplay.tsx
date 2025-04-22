@@ -5,7 +5,7 @@ function CampaignStartDisplay() {
   const startTime = useCampaignStore((state) => state.startTime);
 
   return (
-    <div className="bg-zinc-900 px-4 py-2 rounded-lg mr-4">
+    <div className="bg-zinc-900 px-4 py-2 rounded-lg">
       <span className="text-gray-300">
         Inizio Campagna: {startTime || 'Non impostato'}
       </span>
