@@ -80,11 +80,11 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
     while (usedNumbers.has(newNumber)) {
       newNumber++;
     }
-
+  
     const newFase = {
       number: newNumber,
       title: `Titolo`,
-      estimatedTime: '30'
+      estimatedTime: 30  // Changed from string to number
     };
     addPhase(newFase);
   };
@@ -95,8 +95,8 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
 
   // Update the totalEstimatedTime calculation
   const totalMinutes = fasi.reduce((total, fase) => {
-    const time = parseFloat(fase.estimatedTime) || 0;
-    return total + time;
+    // No need to parse as estimatedTime is now a number
+    return total + fase.estimatedTime;
   }, 0);
   
   // Convert total minutes to hh:mm format

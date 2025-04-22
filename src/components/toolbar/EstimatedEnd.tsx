@@ -22,7 +22,7 @@ function EstimatedEnd() {
   
   // Calculate total estimated time in minutes
   const totalMinutes = fasi.reduce((total, fase) => {
-    const time = parseFloat(fase.estimatedTime) || 0;
+    const time = fase.estimatedTime || 0; // Directly use the number value
     return total + time;
   }, 0);
 

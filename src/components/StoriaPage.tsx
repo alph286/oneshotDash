@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import ToolbarStoria from './storia/ToolbarStoria';
 import { useStoriaStore } from '../stores/storiaStore';
-import { Phase } from '../stores/storiaStore';
+import { Phase, Event } from '../stores/storiaStore';
 import HeaderStoria from './storia/HeaderStoria';
 import AddEventButton from './storia/AddEventButton';
 import EventRenderer from './storia/EventRenderer';
@@ -38,7 +39,7 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
       setIsEditing(false);
     }
   };
-  const handleExport = () => console.log('Exporting storia...');
+
   const handleDelete = () => {
     if (currentFase && window.confirm(`Delete fase "${currentFase.title}"?`)) {
       removePhase(currentFase.id);
@@ -52,17 +53,10 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
     }
   };
 
-  if (!currentFase) {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold mb-6 ">Storia Page</h1>
-        <p>Select a fase from the sidebar</p>
-      </div>
-    );
-  }
-
   // Sort events by position
-  const sortedEvents = [...(currentFase.events || [])].sort((a, b) => a.position - b.position);
+  const sortedEvents = currentFase ? 
+    [...(currentFase.events || [])].sort((a, b) => a.position - b.position) : 
+    [];
 
   // Handle event edit
   const handleEventEdit = (eventId: string) => {
@@ -81,6 +75,64 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
   const handleCancelEventEdit = () => {
     setEditingEventId(null);
   };
+
+  // Add this function to handle drag end
+  // Update the handleDragEnd function to use the proper type
+  const handleDragEnd = (result: DropResult) => {
+    console.log('Draggable ID:', result.draggableId);
+    console.log('Current IDs:', sortedEvents.map(event => event.id));
+    
+    if (!result.destination || !currentFase) return;
+  
+    // Check if the draggable still exists
+    const draggableExists = sortedEvents.some(event => event.id === result.draggableId);
+    if (!draggableExists) return;
+  
+    const items = Array.from(sortedEvents);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    // Update positions for all events
+    const updatedEvents = items.map((event, index) => ({
+      ...event,
+      position: index
+    }));
+    
+    // Update all events in the phase
+    updatedEvents.forEach(event => {
+      updateEvent(currentFase.id, event.id, { position: event.position });
+    });
+  };
+
+  // Update the export function to include events
+  const handleExport = () => {
+    if (currentFase) {
+      const exportData = {
+        ...currentFase,
+        events: sortedEvents
+      };
+      
+      const jsonString = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `fase_${currentFase.number}_${currentFase.title.replace(/\s+/g, '_')}.json`;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  if (!currentFase) {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold mb-6 ">Storia Page</h1>
+        <p>Select a fase from the sidebar</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -103,27 +155,54 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
       <div className="px-6 mt-6">
         <AddEventButton phaseId={currentFase.id} />
         
-        {/* Render Events */}
+        {/* Render Events with Drag and Drop */}
         <div className="mt-6">
           {sortedEvents.length === 0 ? (
             <p className="text-gray-400 italic">Nessun evento. Aggiungi un evento per iniziare.</p>
           ) : (
-            sortedEvents.map(event => (
-              editingEventId === event.id ? (
-                <EventEditor 
-                  key={event.id}
-                  event={event}
-                  onSave={(updatedEvent) => handleEventUpdate(event.id, updatedEvent)}
-                  onCancel={handleCancelEventEdit}
-                />
-              ) : (
-                <EventRenderer 
-                  key={event.id} 
-                  event={event} 
-                  onEdit={() => handleEventEdit(event.id)} 
-                />
-              )
-            ))
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="events">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {sortedEvents.map((event, index) => (
+                      <Draggable 
+                        key={event.id} 
+                        draggableId={event.id} 
+                        index={index}
+                        isDragDisabled={!!editingEventId}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                          >
+                            {editingEventId === event.id ? (
+                              <EventEditor 
+                                key={event.id}
+                                event={event}
+                                onSave={(updatedEvent) => handleEventUpdate(event.id, updatedEvent)}
+                                onCancel={handleCancelEventEdit}
+                              />
+                            ) : (
+                              <EventRenderer 
+                                key={event.id} 
+                                event={event} 
+                                onEdit={() => handleEventEdit(event.id)}
+                                dragHandleProps={provided.dragHandleProps}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           )}
         </div>
       </div>

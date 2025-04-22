@@ -1,7 +1,9 @@
 import { create } from 'zustand';
+
 import { persist } from 'zustand/middleware';
 
-interface Event {
+// Export the Event interface
+export interface Event {
   id: string;
   type: 'narrative' | 'action' | 'descriptive' | 'reminder' | 'loot';
   title: string;
@@ -14,7 +16,7 @@ export interface Phase {
   id: string;
   number: number;
   title: string;
-  estimatedTime: string;
+  estimatedTime: number; // Changed to number to match the type
   events: Event[];
 }
 
