@@ -86,17 +86,23 @@ const ActionEvent: React.FC<ActionEventProps> = ({
         />
       </div>
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Left Column: Initiative Tracker */}
-        <InitiativeTracker isEditing={isEditing} />
+     
+        {/* Two-column layout with 1/3 and 2/3 proportions */}
+        <div className="grid grid-cols-3 gap-4">
+          {/* Left Column: Initiative Tracker (1/3) */}
+          <div className="col-span-1">
+            <InitiativeTracker isEditing={isEditing} />
+          </div>
 
-        {/* Right Column: Enemy Party */}
-        
-        <EnemyParty 
-          isEditing={isEditing} 
-          enemies={eventData.enemies || []}
-          onSave={handleSaveEnemyParty}
-        />
+          {/* Right Column: Enemy Party (2/3) */}
+          <div className="col-span-2">
+            <EnemyParty 
+              isEditing={isEditing} 
+              enemies={eventData.enemies || []}
+              onSave={handleSaveEnemyParty}
+            />
+          
+        </div>
       </div>
     </div>
   );

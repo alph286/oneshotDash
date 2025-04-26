@@ -143,186 +143,178 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
     <div className="p-4 bg-zinc-700/50 rounded-lg h-full">
       <h4 className="text-lg font-semibold text-gray-300 mb-2">Enemy Party</h4>
       
-      {/* Add column headers when there are enemies */}
-      {enemies.length > 0 && (
-        <div className="flex justify-between gap-1 mb-1 px-2">
-          <div className="w-32 text-xs font-medium text-gray-400 text-left pl-1">Enemy Name</div>
-          <div className="w-6 text-xs font-medium text-gray-400 text-left pl-1">AC</div>
-          <div className="w-64 text-xs font-medium text-gray-400 text-left pl-2">
-            {isEditing ? "HPMAX" : "HP"}
-          </div>
-          <div className="w-32 text-xs font-medium text-gray-400 text-left pl-2">HPT</div>
-          <div className="w-68 text-xs font-medium text-gray-400 text-left pl-1">I</div>
-          {isEditing && <div className="w-6"></div>} {/* Spacer for delete button */}
-        </div>
-      )}
-      
       {enemies.length > 0 ? (
-        <div className="space-y-2 mb-3">
-          {enemies.map(enemy => (
-            <div 
-              key={enemy.id} 
-              className={`flex justify-between gap-1 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded relative`}
-            >
-              {isEditing ? (
-                // Edit mode - show all fields as inputs with same layout as view mode
-                <>
-                  <input
-                    type="text"
-                    value={enemy.name}
-                    onChange={(e) => handleEnemyChange(enemy.id, 'name', e.target.value)}
-                    placeholder="Name"
-                    className="w-32 bg-zinc-900 text-gray-200 p-1 rounded text-sm"
-                  />
-                  <input
-                    type="number"
-                    value={enemy.ac}
-                    onChange={(e) => handleEnemyChange(enemy.id, 'ac', parseInt(e.target.value) || 0)}
-                    placeholder="AC"
-                    className="w-6 bg-zinc-900 text-gray-200 p-1 rounded text-sm"
-                  />
-                  <div className="w-32 flex items-center space-x-2">
+        <div className="mb-3">
+          {/* Intestazioni della griglia */}
+          <div className="grid grid-cols-[2fr,1fr,3fr,2fr,1fr,auto] gap-2 mb-1 px-2 text-xs font-medium text-gray-400 text-left">
+            <div>Enemy Name</div>
+            <div className="text-center">AC</div>
+            <div>{isEditing ? "Max HP" : "Max HP / Current HP"}</div>
+            <div>Temp HP</div>
+            <div className="text-center">Initiative</div>
+            {isEditing && <div></div>} {/* Spazio per il pulsante delete */}
+          </div>
+          
+          {/* Righe dei nemici */}
+          <div className="space-y-2">
+            {enemies.map(enemy => (
+              <div 
+                key={enemy.id} 
+                className={`grid grid-cols-[2fr,1fr,3fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}
+              >
+                {isEditing ? (
+                  // Edit mode
+                  <>
+                    <input
+                      type="text"
+                      value={enemy.name}
+                      onChange={(e) => handleEnemyChange(enemy.id, 'name', e.target.value)}
+                      placeholder="Name"
+                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                    />
+                    <input
+                      type="number"
+                      value={enemy.ac}
+                      onChange={(e) => handleEnemyChange(enemy.id, 'ac', parseInt(e.target.value) || 0)}
+                      placeholder="AC"
+                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                    />
                     <input
                       type="number"
                       value={enemy.hpm}
                       onChange={(e) => {
                         const newHpm = parseInt(e.target.value) || 0;
                         handleEnemyChange(enemy.id, 'hpm', newHpm);
-                        // Also update current HP if HPMAX is changed
                         handleEnemyChange(enemy.id, 'hp', newHpm);
                       }}
-                      placeholder="HPMAX"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm min-w-[30px]"
+                      placeholder="Max HP"
+                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
                     />
-                  </div>
-                  <div className="w-32 flex items-center space-x-2">
                     <input
                       type="number"
                       value={enemy.hpt}
                       onChange={(e) => handleEnemyChange(enemy.id, 'hpt', parseInt(e.target.value) || 0)}
-                      placeholder="HPT"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm min-w-[30px]"
+                      placeholder="Temporary HP"
+                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
                     />
-                  </div>
-                  <input
-                    type="number"
-                    value={enemy.initiative}
-                    onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
-                    placeholder="Init"
-                    className="w-8 bg-zinc-900 text-gray-200 p-1 rounded text-sm"
-                  />
-                </>
-              ) : (
-                // View mode - aligned with column headers
-                <>
-                  <div className="w-32 flex items-center text-gray-200 p-1 text-sm text-left truncate">
-                    {enemy.hp <= 0 && (
-                      <img src="/images/skull.png" alt="Defeated" className="w-4 h-4 mr-1 inline-block" />
-                    )}
-                    {enemy.name || "Unnamed"}
-                  </div>
-                  <div className="w-4 text-gray-200 p-1 text-sm text-left">{enemy.ac}</div>
-                  
-                  {/* HP with buttons - mostra HP/HPM */}
-                  <div className="w-64 flex items-center space-x-2">
-                    <div className="flex items-center justify-start bg-zinc-900/60 px-2 py-1 rounded ">
-                      <span className={`text-sm font-medium ${enemy.hp <= 0 ? 'text-red-500' : 'text-gray-200'}`}>
-                      {enemy.hpm} / {enemy.hp}
-                      </span>
+                    <input
+                      type="number"
+                      value={enemy.initiative}
+                      onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
+                      placeholder="Init"
+                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                    />
+                    <button
+                      onClick={() => handleRemoveEnemy(enemy.id)}
+                      className="p-1 bg-red-500/70 text-white rounded hover:bg-red-600 h-8 w-8 flex items-center justify-center"
+                      title="Remove enemy"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </>
+                ) : (
+                  // View mode
+                  <>
+                    <div className="flex items-center text-gray-200 text-sm truncate">
+                      {enemy.hp <= 0 && (
+                        <img src="/images/skull.png" alt="Defeated" className="w-4 h-4 mr-1 inline-block" />
+                      )}
+                      {enemy.name || "Unnamed"}
                     </div>
-                    <div className="flex space-x-1">
-                      <button 
-                        onClick={() => handleHpChange(enemy.id, 5)} 
-                        className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
-                        title="+5 HP"
-                      >
-                        +5
-                      </button>
-                      <button 
-                        onClick={() => handleHpChange(enemy.id, 1)} 
-                        className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
-                        title="+1 HP"
-                      >
-                        +
-                      </button>
-                      <button 
-                        onClick={() => handleHpChange(enemy.id, -1)} 
-                        className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
-                        title="-1 HP"
-                      >
-                        -
-                      </button>
-                      <button 
-                        onClick={() => handleHpChange(enemy.id, -5)} 
-                        className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
-                        title="-5 HP"
-                      >
-                        -5
-                      </button>
+                    <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
+                    
+                    {/* HP con pulsanti */}
+                    <div className="flex items-center gap-1">
+                      <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
+                        <span className={`text-sm ${enemy.hp <= 0 ? 'text-red-500' : 'text-gray-200'}`}>
+                        <span className='font-medium'>{enemy.hpm}</span> / {enemy.hp}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 flex-wrap">
+                        <button 
+                          onClick={() => handleHpChange(enemy.id, 5)} 
+                          className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
+                          title="+5 HP"
+                        >
+                          +5
+                        </button>
+                        <button 
+                          onClick={() => handleHpChange(enemy.id, 1)} 
+                          className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
+                          title="+1 HP"
+                        >
+                          +
+                        </button>
+                        <button 
+                          onClick={() => handleHpChange(enemy.id, -1)} 
+                          className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
+                          title="-1 HP"
+                        >
+                          -
+                        </button>
+                        <button 
+                          onClick={() => handleHpChange(enemy.id, -5)} 
+                          className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
+                          title="-5 HP"
+                        >
+                          -5
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* HPT with buttons */}
-                  <div className="w-32 flex items-center space-x-2">
-                    <div className="flex items-center justify-start bg-zinc-900/60 px-2 py-1 rounded min-w-[30px]">
-                      <span className="text-gray-200 text-sm font-medium">
-                        {enemy.hpt}
-                      </span>
+                    
+                    {/* HPT con pulsanti */}
+                    <div className="flex items-center gap-1">
+                      <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
+                        <span className="text-gray-200 text-sm font-medium">
+                          {enemy.hpt}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 flex-wrap">
+                        <button 
+                          onClick={() => handleHptChange(enemy.id, 5)} 
+                          className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
+                          title="+5 HPT"
+                        >
+                          +5
+                        </button>
+                        <button 
+                          onClick={() => handleHptChange(enemy.id, 1)} 
+                          className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
+                          title="+1 HPT"
+                        >
+                          +
+                        </button>
+                        <button 
+                          onClick={() => handleHptChange(enemy.id, -1)} 
+                          className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
+                          title="-1 HPT"
+                        >
+                          -
+                        </button>
+                        <button 
+                          onClick={() => handleHptChange(enemy.id, -5)} 
+                          className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
+                          title="-5 HPT"
+                        >
+                          -5
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex space-x-1">
-                      <button 
-                        onClick={() => handleHptChange(enemy.id, 5)} 
-                        className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
-                        title="+5 HPT"
-                      >
-                        +5
-                      </button>
-                      <button 
-                        onClick={() => handleHptChange(enemy.id, 1)} 
-                        className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
-                        title="+1 HPT"
-                      >
-                        +
-                      </button>
-                      <button 
-                        onClick={() => handleHptChange(enemy.id, -1)} 
-                        className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
-                        title="-1 HPT"
-                      >
-                        -
-                      </button>
-                      <button 
-                        onClick={() => handleHptChange(enemy.id, -5)} 
-                        className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
-                        title="-5 HPT"
-                      >
-                        -5
-                      </button>
-                    </div>
-                  </div>
-                  
-                  {/* Initiative */}
-                  <div className="w-6 text-gray-200 p-1 text-sm text-left">+{enemy.initiative}</div>
-                </>
-              )}
-              
-              {isEditing && (
-                <button
-                  onClick={() => handleRemoveEnemy(enemy.id)}
-                  className="p-1 bg-red-500/70 text-white rounded hover:bg-red-600"
-                  title="Remove enemy"
-                >
-                  <Trash2 size={14} />
-                </button>
-              )}
-            </div>
-          ))}
+                    
+                    {/* Iniziativa */}
+                    <div className="text-gray-200 text-sm text-center">+{enemy.initiative}</div>
+                    <div></div> {/* Cella vuota per mantenere l'allineamento */}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <p className="text-sm text-gray-400 italic mb-3">No enemies added yet.</p>
       )}
       
-      {/* Mostra i pulsanti solo in edit mode */}
+      {/* Pulsanti in edit mode */}
       {isEditing && (
         <div className="flex gap-2 items-center">
           <button
@@ -349,7 +341,6 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
             <span>Save Enemy Party</span>
           </button>
           
-          {/* Confirmation message */}
           {showConfirmation && (
             <div className="flex items-center text-green-500 ml-2 animate-fadeIn">
               <Check size={16} className="mr-1" />
