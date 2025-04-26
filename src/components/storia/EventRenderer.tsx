@@ -12,6 +12,7 @@ interface EventRendererProps {
     type: 'narrative' | 'action' | 'descriptive' | 'reminder' | 'loot';
     title: string;
     description: string;
+    data?: any; // Add the data property as optional
   };
   onEdit?: () => void;
   onDelete?: () => void;
@@ -58,11 +59,44 @@ const EventRenderer: React.FC<EventRendererProps> = ({
     isEditing
   };
 
+  // Modifica solo la parte che riguarda ActionEvent nel componente EventRenderer
   switch (event.type) {
-    case 'narrative':
-      return <NarrativeEvent {...commonProps} />;
+    // In the EventRenderer component, modify the case for 'action':
     case 'action':
-      return <ActionEvent {...commonProps} />;
+      return <ActionEvent
+        title={event.title}
+        description={event.description}
+        editIcon={editIcon}
+        dragHandle={
+          dragHandleProps ? (
+            <div 
+              {...dragHandleProps} 
+              className="text-gray-400 hover:text-gray-200 cursor-grab"
+              title="Trascina per riordinare"
+            >
+              <GripVertical size={16} />
+            </div>
+          ) : null
+        }
+        onDelete={onDelete}
+        isEditing={isEditing}
+        eventData={event.data || {}}
+        onEventDataChange={(data) => {
+          console.log('Salvando i dati dell\'evento:', data);
+          
+          // Aggiorna l'evento con i nuovi dati
+          const updatedEvent = {
+            ...event,
+            data: data
+          };
+          
+        
+          
+          // Qui dovresti chiamare una funzione per aggiornare l'evento nel tuo stato globale
+          // Per ora, possiamo solo loggare l'evento aggiornato
+          console.log('Evento aggiornato:', updatedEvent);
+        }}
+      />;
     case 'descriptive':
       return <DescriptiveEvent {...commonProps} />;
     case 'reminder':

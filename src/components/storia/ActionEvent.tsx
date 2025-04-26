@@ -1,8 +1,20 @@
 import React from 'react';
-import { Sword, Trash2 } from 'lucide-react';
+import { Sword, Trash2, GripVertical } from 'lucide-react';
 // Import the new components
 import InitiativeTracker from './InitiativeTracker';
 import EnemyParty from './EnemyParty';
+import { useState } from 'react';
+
+// Aggiungi l'interfaccia Enemy
+interface Enemy {
+  id: string;
+  name: string;
+  ac: number;
+  hp: number;
+  hpm: number;  // Aggiunta la proprietà hpm (HP massimi)
+  hpt: number;
+  initiative: number;
+}
 
 interface ActionEventProps {
   title: string;
@@ -10,8 +22,13 @@ interface ActionEventProps {
   editIcon?: React.ReactNode; // This icon will trigger the parent to show EventEditor
   dragHandle?: React.ReactNode;
   onDelete?: () => void;
-  // isEditing prop is no longer needed here for description editing
-  // onDescriptionChange prop is no longer needed here
+  isEditing?: boolean; // Aggiungi la prop isEditing
+  // Aggiungi una prop per i dati dell'evento
+  eventData?: {
+    enemies?: Enemy[];
+  };
+  // Aggiungi una callback per salvare i dati
+  onEventDataChange?: (data: any) => void;
 }
 
 const ActionEvent: React.FC<ActionEventProps> = ({
@@ -20,7 +37,28 @@ const ActionEvent: React.FC<ActionEventProps> = ({
   editIcon,
   dragHandle,
   onDelete,
+  isEditing = false, // Valore di default per isEditing
+  eventData = {},
+  onEventDataChange,
 }) => {
+  // Stato locale per i dati del party nemico
+  const [enemyPartyData, setEnemyPartyData] = useState<Enemy[]>(eventData.enemies || []);
+
+  // Funzione per salvare i dati del party nemico
+  // Nel componente ActionEvent
+  const handleSaveEnemyParty = (enemies: Enemy[]) => {
+    // Aggiorna lo stato locale
+    setEnemyPartyData(enemies);
+    
+    // Passa i dati aggiornati al componente padre
+    if (onEventDataChange) {
+      onEventDataChange({
+        ...eventData,
+        enemies
+      });
+    }
+  };
+
   return (
     <div className="bg-zinc-800/50 p-4 rounded-lg mb-4 border-l-4 border-red-500">
       <div className="flex items-center mb-2">
@@ -50,10 +88,15 @@ const ActionEvent: React.FC<ActionEventProps> = ({
       {/* Two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left Column: Initiative Tracker */}
-        <InitiativeTracker />
+        <InitiativeTracker isEditing={isEditing} />
 
         {/* Right Column: Enemy Party */}
-        <EnemyParty />
+        
+        <EnemyParty 
+          isEditing={isEditing} 
+          enemies={eventData.enemies || []}
+          onSave={handleSaveEnemyParty}
+        />
       </div>
     </div>
   );

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { BookOpen, Sword, FileText, Bell, Gem, Save, X } from 'lucide-react';
 import Editor from 'react-simple-wysiwyg';
+import InitiativeTracker from './InitiativeTracker';
+import EnemyParty from './EnemyParty';
 
 interface Event {
   id: string;
   type: 'narrative' | 'action' | 'descriptive' | 'reminder' | 'loot';
   title: string;
   description: string;
+  data?: any; // Aggiungi la proprietà data
 }
 
 interface EventEditorProps {
@@ -20,7 +23,11 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
   const [description, setDescription] = useState(event.description || '');
 
   const handleSave = () => {
-    onSave({ title, description });
+    onSave({ 
+      title, 
+      description,
+      data: event.data // Include the event data when saving
+    });
   };
 
   const handleEditorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,17 +79,39 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
         </button>
       </div>
       
-      {/* Rimosso il controllo che escludeva gli eventi di tipo 'action' */}
-      <div className="wysiwyg-container">
+      <div className="wysiwyg-container mb-4">
         <Editor 
           value={description}
           onChange={handleEditorChange}
           containerProps={{
-            className: "w-full bg-zinc-700 text-gray-200 text-left rounded-lg min-h-[400px]",
+            className: "w-full bg-zinc-700 text-gray-200 text-left rounded-lg min-h-[200px]",
             style: {resize: 'vertical'}
           }}
         />
       </div>
+
+      {/* Add InitiativeTracker and EnemyParty components for action events */}
+      {event.type === 'action' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Import these components at the top of the file */}
+          <InitiativeTracker isEditing={true} />
+          <EnemyParty 
+            isEditing={true} 
+            enemies={event.data?.enemies || []}
+            onSave={(enemies) => {
+              // Update the event data without closing the editor
+              const updatedData = {
+                ...event.data,
+                enemies: enemies
+              };
+              
+              // This will update the data without closing the editor
+              // We're not calling the main onSave function which would close the editor
+              event.data = updatedData;
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
