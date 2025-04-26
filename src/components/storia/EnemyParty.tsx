@@ -222,13 +222,11 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
                   // View mode
                   <>
                     <div className="flex items-center text-gray-200 text-sm truncate">
-                      {enemy.hp <= 0 && (
-                        <img src="/images/skull.png" alt="Defeated" className="w-4 h-4 mr-1 inline-block" />
-                      )}
+                    
                       {enemy.name || "Unnamed"}
                     </div>
                     <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
-                    <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
+                    <div className="text-left px-2 py-1 rounded flex-shrink-0">
                       <span className="text-sm text-gray-200">
                         {enemy.hpm}
                       </span>

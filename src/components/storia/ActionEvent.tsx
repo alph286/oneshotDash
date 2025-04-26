@@ -98,19 +98,19 @@ const ActionEvent: React.FC<ActionEventProps> = ({
             <InitiativeTracker isEditing={isEditing} />
           </div>
 
-          {/* Right Column: Enemy Party (2/3) */}
-          <div className="col-span-2">
+          {/* Right Column: Enemy Party (1/3) */}
+          <div className="col-span-1">
             <EnemyParty 
               isEditing={isEditing}
               phaseId={phaseId}
               eventId={event.id}
-              enemies={eventData.enemies || []}  // Add this
-              onSave={handleSaveEnemyParty}      // Add this
+              enemies={eventData.enemies || []}
+              onSave={handleSaveEnemyParty}
             />
-          
+          </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 
