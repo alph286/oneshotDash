@@ -8,6 +8,8 @@ import AddEventButton from './storia/AddEventButton';
 import EventRenderer from './storia/EventRenderer';
 import EventEditor from './storia/EventEditor';
 
+
+
 interface StoriaPageProps {
   selectedFaseId?: string;
   setCurrentPage: (page: string) => void;
@@ -192,27 +194,31 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
                         key={event.id} 
                         draggableId={event.id} 
                         index={index}
-                        isDragDisabled={!!editingEventId}
+                        isDragDisabled={!!editingEventId} // Disable drag while editing any event
                       >
                         {(provided) => (
                           <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                           >
+                            {/* This is the key part: */}
                             {editingEventId === event.id ? (
+                              // If this event is being edited, render EventEditor
                               <EventEditor 
-                                key={event.id}
+                                key={`editor-${event.id}`} // Use a different key prefix for editor vs renderer
                                 event={event}
                                 onSave={(updatedEvent) => handleEventUpdate(event.id, updatedEvent)}
                                 onCancel={handleCancelEventEdit}
                               />
                             ) : (
+                              // Otherwise, render EventRenderer (which shows ActionEvent, DescriptiveEvent, etc.)
                               <EventRenderer 
-                                key={event.id} 
+                                key={`renderer-${event.id}`} // Use a different key prefix
                                 event={event} 
-                                onEdit={() => handleEventEdit(event.id)}
+                                // Pass the function to call when the edit icon inside EventRenderer is clicked
+                                onEdit={() => handleEventEdit(event.id)} 
                                 onDelete={() => handleEventDelete(event.id)}
-                                isEditing={editingEventId === event.id}
+                                // isEditing prop is not needed by EventRenderer itself anymore for description
                                 dragHandleProps={provided.dragHandleProps}
                               />
                             )}

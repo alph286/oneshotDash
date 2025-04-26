@@ -72,20 +72,17 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
         </button>
       </div>
       
-      {/* Only show description field for events that need it */}
-      {event.type !== 'action' && (
-        <div className="wysiwyg-container">
-          <Editor 
-          
-            value={description}
-            onChange={handleEditorChange}
-            containerProps={{
-              className: "w-full bg-zinc-700 text-gray-200 text-left rounded-lg min-h-[400px]",
-              style: {resize: 'vertical'}
-            }}
-          />
-        </div>
-      )}
+      {/* Rimosso il controllo che escludeva gli eventi di tipo 'action' */}
+      <div className="wysiwyg-container">
+        <Editor 
+          value={description}
+          onChange={handleEditorChange}
+          containerProps={{
+            className: "w-full bg-zinc-700 text-gray-200 text-left rounded-lg min-h-[400px]",
+            style: {resize: 'vertical'}
+          }}
+        />
+      </div>
     </div>
   );
 };
