@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, Save, Check, Minus } from 'lucide-react';
+import { useEnemyStore } from '../../stores/enemyStore';
 
 // Aggiorna l'interfaccia Enemy per riflettere il significato corretto dei campi
-interface Enemy {
+// Add export keyword before the interface
+export interface Enemy {
   id: string;
   name: string;
   ac: number;
@@ -14,27 +16,39 @@ interface Enemy {
 
 interface EnemyPartyProps {
   isEditing?: boolean;
-  enemies?: Enemy[]; // Dati salvati del party nemico
-  onSave?: (enemies: Enemy[]) => void; // Callback per salvare i dati
+  phaseId: string;
+  eventId: string;
+  enemies?: Enemy[]; // Move inside the interface
+  onSave?: (enemies: Enemy[]) => void; // Move inside the interface
+
+ 
 }
 
 const EnemyParty: React.FC<EnemyPartyProps> = ({ 
-  isEditing = false, 
-  enemies: savedEnemies = [], 
-  onSave 
+  isEditing = false,
+  enemies: savedEnemies = [],
+  onSave,
+  phaseId,
+  eventId
 }) => {
-  // Initialize state with savedEnemies only once
   const [enemies, setEnemies] = useState<Enemy[]>(savedEnemies);
   const prevSavedEnemiesRef = useRef<Enemy[]>(savedEnemies);
-  
-  // Only update state when savedEnemies reference changes
+
+  // Add this useEffect to ensure state is updated when savedEnemies changes
   useEffect(() => {
-    // Compare with previous savedEnemies to avoid infinite loops
     if (JSON.stringify(prevSavedEnemiesRef.current) !== JSON.stringify(savedEnemies)) {
       prevSavedEnemiesRef.current = savedEnemies;
       setEnemies(savedEnemies);
     }
   }, [savedEnemies]);
+
+  // Ensure state is reset when exiting edit mode
+  useEffect(() => {
+    if (!isEditing) {
+      setEnemies(savedEnemies);
+    }
+  }, [isEditing, savedEnemies]);
+
 
   const handleAddEnemy = () => {
     const newEnemy: Enemy = {
@@ -145,22 +159,21 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
       
       {enemies.length > 0 ? (
         <div className="mb-3">
-          {/* Intestazioni della griglia */}
-          <div className="grid grid-cols-[2fr,1fr,3fr,2fr,1fr,auto] gap-2 mb-1 px-2 text-xs font-medium text-gray-400 text-left">
+          {/* Updated grid headers */}
+          <div className="grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 mb-1 px-2 text-xs font-medium text-gray-400 text-left">
             <div>Enemy Name</div>
             <div className="text-center">AC</div>
-            <div>{isEditing ? "Max HP" : "Max HP / Current HP"}</div>
-            <div>Temp HP</div>
+            <div>Max HP</div>
             <div className="text-center">Initiative</div>
-            {isEditing && <div></div>} {/* Spazio per il pulsante delete */}
+            {isEditing && <div></div>}
           </div>
-          
-          {/* Righe dei nemici */}
+      
+          {/* Enemy rows */}
           <div className="space-y-2">
             {enemies.map(enemy => (
               <div 
                 key={enemy.id} 
-                className={`grid grid-cols-[2fr,1fr,3fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}
+                className={`grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}
               >
                 {isEditing ? (
                   // Edit mode
@@ -192,13 +205,6 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
                     />
                     <input
                       type="number"
-                      value={enemy.hpt}
-                      onChange={(e) => handleEnemyChange(enemy.id, 'hpt', parseInt(e.target.value) || 0)}
-                      placeholder="Temporary HP"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
-                    />
-                    <input
-                      type="number"
                       value={enemy.initiative}
                       onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
                       placeholder="Init"
@@ -222,88 +228,12 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
                       {enemy.name || "Unnamed"}
                     </div>
                     <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
-                    
-                    {/* HP con pulsanti */}
-                    <div className="flex items-center gap-1">
-                      <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
-                        <span className={`text-sm ${enemy.hp <= 0 ? 'text-red-500' : 'text-gray-200'}`}>
-                        <span className='font-medium'>{enemy.hpm}</span> / {enemy.hp}
-                        </span>
-                      </div>
-                      <div className="flex gap-1 flex-wrap">
-                        <button 
-                          onClick={() => handleHpChange(enemy.id, 5)} 
-                          className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
-                          title="+5 HP"
-                        >
-                          +5
-                        </button>
-                        <button 
-                          onClick={() => handleHpChange(enemy.id, 1)} 
-                          className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
-                          title="+1 HP"
-                        >
-                          +
-                        </button>
-                        <button 
-                          onClick={() => handleHpChange(enemy.id, -1)} 
-                          className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
-                          title="-1 HP"
-                        >
-                          -
-                        </button>
-                        <button 
-                          onClick={() => handleHpChange(enemy.id, -5)} 
-                          className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
-                          title="-5 HP"
-                        >
-                          -5
-                        </button>
-                      </div>
+                    <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
+                      <span className="text-sm text-gray-200">
+                        {enemy.hpm}
+                      </span>
                     </div>
-                    
-                    {/* HPT con pulsanti */}
-                    <div className="flex items-center gap-1">
-                      <div className="bg-zinc-900/60 px-2 py-1 rounded flex-shrink-0">
-                        <span className="text-gray-200 text-sm font-medium">
-                          {enemy.hpt}
-                        </span>
-                      </div>
-                      <div className="flex gap-1 flex-wrap">
-                        <button 
-                          onClick={() => handleHptChange(enemy.id, 5)} 
-                          className="w-7 h-7 flex items-center justify-center bg-green-700/70 text-white text-xs font-bold hover:bg-green-700"
-                          title="+5 HPT"
-                        >
-                          +5
-                        </button>
-                        <button 
-                          onClick={() => handleHptChange(enemy.id, 1)} 
-                          className="w-7 h-7 flex items-center justify-center bg-green-600/70 text-white text-xs font-bold hover:bg-green-600"
-                          title="+1 HPT"
-                        >
-                          +
-                        </button>
-                        <button 
-                          onClick={() => handleHptChange(enemy.id, -1)} 
-                          className="w-7 h-7 flex items-center justify-center bg-red-500/70 text-white text-xs font-bold hover:bg-red-500"
-                          title="-1 HPT"
-                        >
-                          -
-                        </button>
-                        <button 
-                          onClick={() => handleHptChange(enemy.id, -5)} 
-                          className="w-7 h-7 flex items-center justify-center bg-red-700/70 text-white text-xs font-bold hover:bg-red-700"
-                          title="-5 HPT"
-                        >
-                          -5
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Iniziativa */}
                     <div className="text-gray-200 text-sm text-center">+{enemy.initiative}</div>
-                    <div></div> {/* Cella vuota per mantenere l'allineamento */}
                   </>
                 )}
               </div>
@@ -314,7 +244,7 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
         <p className="text-sm text-gray-400 italic mb-3">No enemies added yet.</p>
       )}
       
-      {/* Pulsanti in edit mode */}
+      {/* Edit mode buttons remain unchanged */}
       {isEditing && (
         <div className="flex gap-2 items-center">
           <button

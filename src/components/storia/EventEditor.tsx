@@ -96,17 +96,15 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
           {/* Import these components at the top of the file */}
           <InitiativeTracker isEditing={true} />
           <EnemyParty 
-            isEditing={true} 
+            isEditing={true}
+            phaseId="currentPhaseId" // Add this (you'll need to get the actual phase ID from props or context)
+            eventId={event.id}       // Add this
             enemies={event.data?.enemies || []}
             onSave={(enemies) => {
-              // Update the event data without closing the editor
               const updatedData = {
                 ...event.data,
                 enemies: enemies
               };
-              
-              // This will update the data without closing the editor
-              // We're not calling the main onSave function which would close the editor
               event.data = updatedData;
             }}
           />

@@ -29,6 +29,8 @@ interface ActionEventProps {
   };
   // Aggiungi una callback per salvare i dati
   onEventDataChange?: (data: any) => void;
+  phaseId: string;  // Add this
+  event: { id: string };  // Add this
 }
 
 const ActionEvent: React.FC<ActionEventProps> = ({
@@ -40,6 +42,8 @@ const ActionEvent: React.FC<ActionEventProps> = ({
   isEditing = false, // Valore di default per isEditing
   eventData = {},
   onEventDataChange,
+  phaseId,  // Add this
+  event     // Add this
 }) => {
   // Stato locale per i dati del party nemico
   const [enemyPartyData, setEnemyPartyData] = useState<Enemy[]>(eventData.enemies || []);
@@ -97,9 +101,11 @@ const ActionEvent: React.FC<ActionEventProps> = ({
           {/* Right Column: Enemy Party (2/3) */}
           <div className="col-span-2">
             <EnemyParty 
-              isEditing={isEditing} 
-              enemies={eventData.enemies || []}
-              onSave={handleSaveEnemyParty}
+              isEditing={isEditing}
+              phaseId={phaseId}
+              eventId={event.id}
+              enemies={eventData.enemies || []}  // Add this
+              onSave={handleSaveEnemyParty}      // Add this
             />
           
         </div>

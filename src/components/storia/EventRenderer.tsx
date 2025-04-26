@@ -12,12 +12,13 @@ interface EventRendererProps {
     type: 'narrative' | 'action' | 'descriptive' | 'reminder' | 'loot';
     title: string;
     description: string;
-    data?: any; // Add the data property as optional
+    data?: any;
   };
   onEdit?: () => void;
   onDelete?: () => void;
   isEditing?: boolean;
   dragHandleProps?: any;
+  onSave?: (updatedEvent: any) => void; // Add this
 }
 
 const EventRenderer: React.FC<EventRendererProps> = ({ 
@@ -25,7 +26,8 @@ const EventRenderer: React.FC<EventRendererProps> = ({
   onEdit, 
   onDelete,
   isEditing,
-  dragHandleProps 
+  dragHandleProps,
+  onSave // Add this
 }) => {
   // Create edit icon
   const editIcon = onEdit ? (
@@ -81,20 +83,16 @@ const EventRenderer: React.FC<EventRendererProps> = ({
         onDelete={onDelete}
         isEditing={isEditing}
         eventData={event.data || {}}
+        phaseId="currentPhaseId"
+        event={event}
         onEventDataChange={(data) => {
-          console.log('Salvando i dati dell\'evento:', data);
-          
-          // Aggiorna l'evento con i nuovi dati
-          const updatedEvent = {
-            ...event,
-            data: data
-          };
-          
-        
-          
-          // Qui dovresti chiamare una funzione per aggiornare l'evento nel tuo stato globale
-          // Per ora, possiamo solo loggare l'evento aggiornato
-          console.log('Evento aggiornato:', updatedEvent);
+          // Ensure onSave exists before calling it
+          if (onSave) {
+            onSave({
+              ...event,
+              data: data
+            });
+          }
         }}
       />;
     case 'descriptive':
