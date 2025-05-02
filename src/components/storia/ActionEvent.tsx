@@ -1,7 +1,6 @@
 import React from 'react';
 import { Sword, Trash2, GripVertical } from 'lucide-react';
 // Import the new components
-import InitiativeTracker from './InitiativeTracker';
 import EnemyParty from './EnemyParty';
 import { useState } from 'react';
 
@@ -93,13 +92,11 @@ const ActionEvent: React.FC<ActionEventProps> = ({
      
         {/* Two-column layout with 1/3 and 2/3 proportions */}
         <div className="grid grid-cols-3 gap-4">
-          {/* Left Column: Initiative Tracker (1/3) */}
-          <div className="col-span-1">
-            <InitiativeTracker isEditing={isEditing} />
-          </div>
+        
+    
 
-          {/* Right Column: Enemy Party (1/3) */}
-          <div className="col-span-1">
+          {/* Middle Column: Enemy Party (1/3) */}
+          <div className="col-span-3">
             <EnemyParty 
               isEditing={isEditing}
               phaseId={phaseId}
@@ -108,6 +105,9 @@ const ActionEvent: React.FC<ActionEventProps> = ({
               onSave={handleSaveEnemyParty}
             />
           </div>
+
+          {/* Right Column: Enemy Info (1/3) */}
+        
         </div>
       </div>
     

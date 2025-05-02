@@ -12,6 +12,7 @@ export interface Enemy {
   hpm: number;  // HP massimi
   hpt: number;  // HP temporanei
   initiative: number;
+  info?: string;  // Add this new field
 }
 
 interface EnemyPartyProps {
@@ -171,71 +172,70 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
           {/* Enemy rows */}
           <div className="space-y-2">
             {enemies.map(enemy => (
-              <div 
-                key={enemy.id} 
-                className={`grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}
-              >
-                {isEditing ? (
-                  // Edit mode
-                  <>
-                    <input
-                      type="text"
-                      value={enemy.name}
-                      onChange={(e) => handleEnemyChange(enemy.id, 'name', e.target.value)}
-                      placeholder="Name"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
-                    />
-                    <input
-                      type="number"
-                      value={enemy.ac}
-                      onChange={(e) => handleEnemyChange(enemy.id, 'ac', parseInt(e.target.value) || 0)}
-                      placeholder="AC"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
-                    />
-                    <input
-                      type="number"
-                      value={enemy.hpm}
-                      onChange={(e) => {
-                        const newHpm = parseInt(e.target.value) || 0;
-                        handleEnemyChange(enemy.id, 'hpm', newHpm);
-                        handleEnemyChange(enemy.id, 'hp', newHpm);
-                      }}
-                      placeholder="Max HP"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
-                    />
-                    <input
-                      type="number"
-                      value={enemy.initiative}
-                      onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
-                      placeholder="Init"
-                      className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
-                    />
-                    <button
-                      onClick={() => handleRemoveEnemy(enemy.id)}
-                      className="p-1 bg-red-500/70 text-white rounded hover:bg-red-600 h-8 w-8 flex items-center justify-center"
-                      title="Remove enemy"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </>
-                ) : (
-                  // View mode
-                  <>
-                    <div className="flex items-center text-gray-200 text-sm truncate">
-                    
-                      {enemy.name || "Unnamed"}
-                    </div>
-                    <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
-                    <div className="text-left px-2 py-1 rounded flex-shrink-0">
-                      <span className="text-sm text-gray-200">
-                        {enemy.hpm}
-                      </span>
-                    </div>
-                    <div className="text-gray-200 text-sm text-center">+{enemy.initiative}</div>
-                  </>
-                )}
-              </div>
-            ))}
+              <div key={enemy.id}>
+                <div className={`grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}>
+                  {isEditing ? (
+                    // Edit mode
+                    <>
+                      <input
+                        type="text"
+                        value={enemy.name}
+                        onChange={(e) => handleEnemyChange(enemy.id, 'name', e.target.value)}
+                        placeholder="Name"
+                        className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                      />
+                      <input
+                        type="number"
+                        value={enemy.ac}
+                        onChange={(e) => handleEnemyChange(enemy.id, 'ac', parseInt(e.target.value) || 0)}
+                        placeholder="AC"
+                        className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                      />
+                      <input
+                        type="number"
+                        value={enemy.hpm}
+                        onChange={(e) => {
+                          const newHpm = parseInt(e.target.value) || 0;
+                          handleEnemyChange(enemy.id, 'hpm', newHpm);
+                          handleEnemyChange(enemy.id, 'hp', newHpm);
+                        }}
+                        placeholder="Max HP"
+                        className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                      />
+                      <input
+                        type="number"
+                        value={enemy.initiative}
+                        onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
+                        placeholder="Init"
+                        className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
+                      />
+                      <button
+                        onClick={() => handleRemoveEnemy(enemy.id)}
+                        className="p-1 bg-red-500/70 text-white rounded hover:bg-red-600 h-8 w-8 flex items-center justify-center"
+                        title="Remove enemy"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </>
+                  ) : (
+                    // View mode
+                    <>
+                      <div className="flex items-center text-gray-200 text-sm truncate">
+                      
+                        {enemy.name || "Unnamed"}
+                      </div>
+                      <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
+                      <div className="text-left px-2 py-1 rounded flex-shrink-0">
+                        <span className="text-sm text-gray-200">
+                          {enemy.hpm}
+                        </span>
+                      </div>
+                      <div className="text-gray-200 text-sm text-center">+{enemy.initiative}</div>
+                    </>
+                  )}
+                </div>
+             
+            </div>))}
           </div>
         </div>
       ) : (

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, Sword, FileText, Bell, Gem, Save, X } from 'lucide-react';
 import Editor from 'react-simple-wysiwyg';
-import InitiativeTracker from './InitiativeTracker';
 import EnemyParty from './EnemyParty';
 
 interface Event {
@@ -92,9 +91,9 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
 
       {/* Add InitiativeTracker and EnemyParty components for action events */}
       {event.type === 'action' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {/* Import these components at the top of the file */}
-          <InitiativeTracker isEditing={true} />
+          
           <EnemyParty 
             isEditing={true}
             phaseId="currentPhaseId" // Add this (you'll need to get the actual phase ID from props or context)
