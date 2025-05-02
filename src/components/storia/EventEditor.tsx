@@ -15,9 +15,10 @@ interface EventEditorProps {
   event: Event;
   onSave: (updatedEvent: Partial<Event>) => void;
   onCancel: () => void;
+  phaseId?: string; // Aggiungi questa prop
 }
 
-const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) => {
+const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel, phaseId = "currentPhaseId" }) => {
   const [title, setTitle] = useState(event.title);
   const [description, setDescription] = useState(event.description || '');
 
@@ -89,22 +90,23 @@ const EventEditor: React.FC<EventEditorProps> = ({ event, onSave, onCancel }) =>
         />
       </div>
 
-      {/* Add InitiativeTracker and EnemyParty components for action events */}
       {event.type === 'action' && (
         <div className="grid grid-cols-1 gap-4">
-          {/* Import these components at the top of the file */}
-          
           <EnemyParty 
             isEditing={true}
-            phaseId="currentPhaseId" // Add this (you'll need to get the actual phase ID from props or context)
-            eventId={event.id}       // Add this
+            phaseId={phaseId} 
+            eventId={event.id}       
             enemies={event.data?.enemies || []}
+            showInfoField={true}
             onSave={(enemies) => {
               const updatedData = {
                 ...event.data,
                 enemies: enemies
               };
               event.data = updatedData;
+              onSave({ 
+                data: updatedData 
+              });
             }}
           />
         </div>

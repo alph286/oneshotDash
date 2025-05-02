@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, Save, Check, Minus } from 'lucide-react';
+import { Plus, Trash2, Save, Check, Info } from 'lucide-react';
 import { useEnemyStore } from '../../stores/enemyStore';
 
-// Aggiorna l'interfaccia Enemy per riflettere il significato corretto dei campi
-// Add export keyword before the interface
 export interface Enemy {
   id: string;
   name: string;
   ac: number;
-  hp: number;   // HP attuali
-  hpm: number;  // HP massimi
-  hpt: number;  // HP temporanei
   initiative: number;
-  info?: string;  // Add this new field
+  maxHp?: number;
+  info?: string;
 }
 
 interface EnemyPartyProps {
   isEditing?: boolean;
   phaseId: string;
   eventId: string;
-  enemies?: Enemy[]; // Move inside the interface
-  onSave?: (enemies: Enemy[]) => void; // Move inside the interface
-
- 
+  enemies?: Enemy[];
+  onSave?: (enemies: Enemy[]) => void;
+  showInfoField?: boolean;
 }
 
 const EnemyParty: React.FC<EnemyPartyProps> = ({ 
@@ -30,12 +25,12 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
   enemies: savedEnemies = [],
   onSave,
   phaseId,
-  eventId
+  eventId,
+  showInfoField = false
 }) => {
   const [enemies, setEnemies] = useState<Enemy[]>(savedEnemies);
   const prevSavedEnemiesRef = useRef<Enemy[]>(savedEnemies);
 
-  // Add this useEffect to ensure state is updated when savedEnemies changes
   useEffect(() => {
     if (JSON.stringify(prevSavedEnemiesRef.current) !== JSON.stringify(savedEnemies)) {
       prevSavedEnemiesRef.current = savedEnemies;
@@ -43,23 +38,20 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
     }
   }, [savedEnemies]);
 
-  // Ensure state is reset when exiting edit mode
   useEffect(() => {
     if (!isEditing) {
       setEnemies(savedEnemies);
     }
   }, [isEditing, savedEnemies]);
 
-
   const handleAddEnemy = () => {
     const newEnemy: Enemy = {
       id: crypto.randomUUID(),
       name: '',
       ac: 10,
-      hp: 10,     // HP attuali iniziali
-      hpm: 10,    // HP massimi iniziali
-      hpt: 0,     // HP temporanei iniziali
-      initiative: 0
+      initiative: 0,
+      maxHp: 0,
+      info: ''
     };
     setEnemies(prevEnemies => [...prevEnemies, newEnemy]);
   };
@@ -77,81 +69,17 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
     }));
   };
   
-  // Add functions for HP and HPT changes in view mode
-  const handleHpChange = (id: string, amount: number) => {
-    setEnemies(prevEnemies => {
-      const updatedEnemies = prevEnemies.map(enemy => {
-        if (enemy.id === id) {
-          // Ensure HP doesn't go below 0
-          const newHp = Math.max(0, enemy.hp + amount);
-          return { ...enemy, hp: newHp };
-        }
-        return enemy;
-      });
-      
-      // Auto-save when HP changes
-      if (onSave) {
-        onSave(updatedEnemies);
-      }
-      
-      return updatedEnemies;
-    });
-  };
-
-  const handleHptChange = (id: string, amount: number) => {
-    setEnemies(prevEnemies => {
-      const updatedEnemies = prevEnemies.map(enemy => {
-        if (enemy.id === id) {
-          // Ensure HPT doesn't go below 0
-          const newHpt = Math.max(0, enemy.hpt + amount);
-          return { ...enemy, hpt: newHpt };
-        }
-        return enemy;
-      });
-      
-      // Auto-save when HPT changes
-      if (onSave) {
-        onSave(updatedEnemies);
-      }
-      
-      return updatedEnemies;
-    });
-  };
-  
-  // Add state for showing confirmation message
   const [showConfirmation, setShowConfirmation] = useState(false);
   
   const handleSaveParty = () => {
-    console.log('handleSaveParty chiamato, nemici:', enemies);
     if (onSave) {
-      console.log('Chiamando onSave con:', enemies);
       onSave(enemies);
       
-      // Show confirmation message and hide it after 3 seconds
       setShowConfirmation(true);
       setTimeout(() => {
         setShowConfirmation(false);
       }, 3000);
-    } else {
-      console.log('onSave non è definito');
     }
-  };
-
-  // Function to restore all enemies' HP to their max HP
-  const handleRestoreEnemyHp = () => {
-    setEnemies(prevEnemies => {
-      const restoredEnemies = prevEnemies.map(enemy => ({
-        ...enemy,
-        hp: enemy.hpm // Reset HP to HPM value
-      }));
-      
-      // Save the restored state
-      if (onSave) {
-        onSave(restoredEnemies);
-      }
-      
-      return restoredEnemies;
-    });
   };
 
   return (
@@ -160,22 +88,19 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
       
       {enemies.length > 0 ? (
         <div className="mb-3">
-          {/* Updated grid headers */}
-          <div className="grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 mb-1 px-2 text-xs font-medium text-gray-400 text-left">
+          <div className="grid grid-cols-[2fr,1fr,1fr,1fr,auto] gap-2 mb-1 px-2 text-xs font-medium text-gray-400 text-left">
             <div>Enemy Name</div>
             <div className="text-center">AC</div>
-            <div>Max HP</div>
             <div className="text-center">Initiative</div>
+            <div className="text-center">HP Max</div>
             {isEditing && <div></div>}
           </div>
       
-          {/* Enemy rows */}
           <div className="space-y-2">
             {enemies.map(enemy => (
               <div key={enemy.id}>
-                <div className={`grid grid-cols-[2fr,1fr,2fr,1fr,auto] gap-2 ${enemy.hp <= 0 ? 'bg-zinc-900/90' : 'bg-zinc-800/70'} p-2 rounded items-center`}>
+                <div className="grid grid-cols-[2fr,1fr,1fr,1fr,auto] gap-2 bg-zinc-800/70 p-2 rounded items-center">
                   {isEditing ? (
-                    // Edit mode
                     <>
                       <input
                         type="text"
@@ -193,20 +118,16 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
                       />
                       <input
                         type="number"
-                        value={enemy.hpm}
-                        onChange={(e) => {
-                          const newHpm = parseInt(e.target.value) || 0;
-                          handleEnemyChange(enemy.id, 'hpm', newHpm);
-                          handleEnemyChange(enemy.id, 'hp', newHpm);
-                        }}
-                        placeholder="Max HP"
+                        value={enemy.initiative}
+                        onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
+                        placeholder="Init"
                         className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
                       />
                       <input
                         type="number"
-                        value={enemy.initiative}
-                        onChange={(e) => handleEnemyChange(enemy.id, 'initiative', parseInt(e.target.value) || 0)}
-                        placeholder="Init"
+                        value={enemy.maxHp || 0}
+                        onChange={(e) => handleEnemyChange(enemy.id, 'maxHp', parseInt(e.target.value) || 0)}
+                        placeholder="HP Max"
                         className="bg-zinc-900 text-gray-200 p-1 rounded text-sm w-full"
                       />
                       <button
@@ -218,31 +139,40 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
                       </button>
                     </>
                   ) : (
-                    // View mode
                     <>
                       <div className="flex items-center text-gray-200 text-sm truncate">
-                      
                         {enemy.name || "Unnamed"}
                       </div>
                       <div className="text-gray-200 text-sm text-center">{enemy.ac}</div>
-                      <div className="text-left px-2 py-1 rounded flex-shrink-0">
-                        <span className="text-sm text-gray-200">
-                          {enemy.hpm}
-                        </span>
-                      </div>
                       <div className="text-gray-200 text-sm text-center">+{enemy.initiative}</div>
+                      <div className="text-gray-200 text-sm text-center">{enemy.maxHp || 0}</div>
                     </>
                   )}
                 </div>
-             
-            </div>))}
+                {showInfoField && isEditing && (
+                  <div className="mt-1 mb-2">
+                    <textarea
+                      value={enemy.info || ''}
+                      onChange={(e) => handleEnemyChange(enemy.id, 'info', e.target.value)}
+                      placeholder="Note sul nemico"
+                      className="bg-zinc-900 text-gray-200 p-2 rounded text-sm w-full min-h-[60px] resize-y"
+                    />
+                  </div>
+                )}
+                {showInfoField && !isEditing && enemy.info && (
+                  <div className="mt-1 mb-2 bg-zinc-900/50 p-2 rounded text-left">
+                    <div className="text-xs text-gray-400 mb-1">Note:</div>
+                    <div className="text-sm text-gray-200">{enemy.info}</div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       ) : (
         <p className="text-sm text-gray-400 italic mb-3">No enemies added yet.</p>
       )}
       
-      {/* Edit mode buttons remain unchanged */}
       {isEditing && (
         <div className="flex gap-2 items-center">
           <button
@@ -251,14 +181,6 @@ const EnemyParty: React.FC<EnemyPartyProps> = ({
           >
             <Plus size={16} />
             <span>Add Enemy</span>
-          </button>
-          
-          <button
-            onClick={handleRestoreEnemyHp}
-            className="flex items-center gap-1 px-2 py-1 bg-blue-500/70 text-white rounded hover:bg-blue-600"
-          >
-            <Minus size={16} className="rotate-90" />
-            <span>Restore Enemy HP</span>
           </button>
           
           <button

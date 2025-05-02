@@ -9,10 +9,9 @@ interface Enemy {
   id: string;
   name: string;
   ac: number;
-  hp: number;
-  hpm: number;  // Aggiunta la proprietà hpm (HP massimi)
-  hpt: number;
   initiative: number;
+  maxHp?: number;
+  info?: string;
 }
 
 interface ActionEventProps {
@@ -103,6 +102,7 @@ const ActionEvent: React.FC<ActionEventProps> = ({
               eventId={event.id}
               enemies={eventData.enemies || []}
               onSave={handleSaveEnemyParty}
+              showInfoField={true}
             />
           </div>
 

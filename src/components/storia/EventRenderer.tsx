@@ -18,7 +18,8 @@ interface EventRendererProps {
   onDelete?: () => void;
   isEditing?: boolean;
   dragHandleProps?: any;
-  onSave?: (updatedEvent: any) => void; // Add this
+  onSave?: (updatedEvent: any) => void;
+  phaseId: string; // Add this property to fix the error
 }
 
 const EventRenderer: React.FC<EventRendererProps> = ({ 
@@ -27,7 +28,8 @@ const EventRenderer: React.FC<EventRendererProps> = ({
   onDelete,
   isEditing,
   dragHandleProps,
-  onSave // Add this
+  onSave, // Add this
+  phaseId  // Add this
 }) => {
   // Create edit icon
   const editIcon = onEdit ? (
@@ -83,7 +85,7 @@ const EventRenderer: React.FC<EventRendererProps> = ({
         onDelete={onDelete}
         isEditing={isEditing}
         eventData={event.data || {}}
-        phaseId="currentPhaseId"
+        phaseId={phaseId} // Passa l'ID della fase corrente
         event={event}
         onEventDataChange={(data) => {
           // Ensure onSave exists before calling it

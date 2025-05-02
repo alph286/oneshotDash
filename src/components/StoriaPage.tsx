@@ -213,13 +213,12 @@ function StoriaPage({ selectedFaseId, setCurrentPage }: StoriaPageProps) {
                             ) : (
                               // Otherwise, render EventRenderer (which shows ActionEvent, DescriptiveEvent, etc.)
                               <EventRenderer 
-                                key={`renderer-${event.id}`} // Use a different key prefix
+                                key={`renderer-${event.id}`}
                                 event={event} 
-                                // Pass the function to call when the edit icon inside EventRenderer is clicked
                                 onEdit={() => handleEventEdit(event.id)} 
                                 onDelete={() => handleEventDelete(event.id)}
-                                // isEditing prop is not needed by EventRenderer itself anymore for description
                                 dragHandleProps={provided.dragHandleProps}
+                                phaseId={currentFase.id} // Make sure to pass this
                               />
                             )}
                           </div>
