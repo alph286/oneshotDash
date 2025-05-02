@@ -97,6 +97,8 @@ const EventRenderer: React.FC<EventRendererProps> = ({
           }
         }}
       />;
+    case 'narrative':
+      return <NarrativeEvent {...commonProps} />;
     case 'descriptive':
       return <DescriptiveEvent {...commonProps} />;
     case 'reminder':
