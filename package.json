@@ -8,7 +8,10 @@
     "serve": "serve -s dist --single"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@hello-pangea/dnd": "^18.0.1",
+    "@mui/material": "^7.0.2",
     "@radix-ui/react-accordion": "^1.2.7",
     "@radix-ui/react-dialog": "^1.1.10",
     "@radix-ui/react-separator": "^1.1.4",

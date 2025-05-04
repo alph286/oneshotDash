@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useStoriaStore } from '../../stores/storiaStore';
 import { useCampaignStore } from '../../stores/campaignStore';
-import { Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Chip,
+  Stack
+} from '@mui/material';
+import { 
+  AccessTime as ClockIcon, 
+  Warning as AlertIcon, 
+  CheckCircle as CheckIcon 
+} from '@mui/icons-material';
 
 function TimeTracker() {
   const fasi = useStoriaStore(state => state.phases);
@@ -70,46 +81,53 @@ function TimeTracker() {
   }
 
   return (
-    <div className="bg-zinc-900 px-4 py-2 rounded-lg flex items-center gap-3">
-      <span className="text-gray-300 text-sm whitespace-nowrap">Fase attiva:</span>
-      <div className="flex gap-2 items-center">
+    <Box sx={{ 
+      bgcolor: 'background.paper', 
+      px: 2, 
+      py: 1.5, 
+      borderRadius: 2,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      height: 40 // Altezza fissa standardizzata
+    }}>
+      <Typography variant="body2" color="text.secondary">
+        Fase attiva:
+      </Typography>
+      
+      <Stack direction="row" spacing={1}>
         {sortedFasi.map((fase, index) => (
-          <button
+          <Button
             key={fase.id}
             onClick={() => handlePhaseClick(index)}
-            className={`px-2 py-1 rounded-md text-xs ${
-              activePhaseIndex === index 
-                ? 'bg-amber-500 text-zinc-900 font-bold' 
-                : 'bg-zinc-800 text-gray-300 hover:bg-zinc-700'
-            }`}
-            title={fase.title}
+            variant={activePhaseIndex === index ? "contained" : "outlined"}
+            color={activePhaseIndex === index ? "primary" : "inherit"}
+            size="small"
+            sx={{ minWidth: 'auto', px: 1, height: 24 }} // Altezza fissa per i pulsanti
           >
             {fase.number}
-          </button>
+          </Button>
         ))}
-      </div>
+      </Stack>
       
       {activePhaseIndex !== null && (
-        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
-          <span className="text-gray-300">Stato:</span>
-          {isAhead ? (
-            <>
-              <CheckCircle size={16} className="text-green-500" />
-              <span className="text-green-500">
-                In anticipo di {formatTimeDifference()}
-              </span>
-            </>
-          ) : (
-            <>
-              <AlertTriangle size={16} className="text-red-500" />
-              <span className="text-red-500">
-                In ritardo di {formatTimeDifference()}
-              </span>
-            </>
-          )}
-        </div>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            Stato:
+          </Typography>
+          
+          <Chip
+            icon={isAhead ? <CheckIcon /> : <AlertIcon />}
+            label={isAhead 
+              ? `In anticipo di ${formatTimeDifference()}` 
+              : `In ritardo di ${formatTimeDifference()}`
+            }
+            color={isAhead ? "success" : "error"}
+            size="small"
+          />
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

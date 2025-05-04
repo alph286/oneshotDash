@@ -1,3 +1,4 @@
+import { Box, Typography } from '@mui/material';
 import { useStoriaStore } from '../../stores/storiaStore';
 import { useCampaignStore } from '../../stores/campaignStore';
 
@@ -40,12 +41,22 @@ function EstimatedEnd() {
   };
 
   return (
-    <div className="bg-zinc-900 px-4 py-2 rounded-lg">
-      <span className="text-gray-300">Stima Fine: </span>
-      <span className="text-sm text-amber-500">
+    <Box sx={{ 
+      bgcolor: 'background.paper', 
+      px: 2, 
+      py: 1.5, 
+      borderRadius: 2,
+      display: 'flex',
+      alignItems: 'center',
+      height: 40 // Altezza fissa standardizzata
+    }}>
+      <Typography variant="body2" color="text.secondary">
+        Stima Fine:
+      </Typography>
+      <Typography variant="body2" color="primary" sx={{ ml: 1 }}>
         {formatTime(estimatedEnd)}
-      </span>
-    </div>
+      </Typography>
+    </Box>
   );
 }
 
