@@ -29,6 +29,7 @@
 - Polishing della grafica
 - Modalità editing eventi d'azione avanzato
 - Shortcut da tastiera
+- Trovare un modo sano per importare le magie
 
 ---
 
