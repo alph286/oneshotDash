@@ -1,6 +1,7 @@
 import Time from "./toolbar/Time"
 import CampaignStartDisplay from "./toolbar/CampaignStartDisplay"
-import EstimatedEnd from "./toolbar/EstimatedEnd" // Add this import
+import EstimatedEnd from "./toolbar/EstimatedEnd"
+import TimeTracker from "./toolbar/TimeTracker" // Aggiungi questa importazione
 
 function Toolbar() {
   return (
@@ -8,7 +9,8 @@ function Toolbar() {
       <div className="flex items-center gap-4">
         <Time />
         <CampaignStartDisplay />
-        <EstimatedEnd /> {/* Add this component */}
+        <EstimatedEnd />
+        <TimeTracker /> {/* Aggiungi questo componente */}
       </div>
     </div>
   )
