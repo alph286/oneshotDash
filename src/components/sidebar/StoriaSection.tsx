@@ -2,6 +2,17 @@ import { Settings, ChevronDown, Plus, Upload, Download } from 'lucide-react'
 import { useState } from 'react'
 import { useStoriaStore } from '../../stores/storiaStore'
 import { useEditModeStore } from '../../stores/editModeStore'
+import { 
+  List, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  Collapse, 
+  Button, 
+  Box,
+  Typography,
+  Chip
+} from '@mui/material'
 
 interface StoriaSectionProps {
   currentPage: string
@@ -257,119 +268,185 @@ function StoriaSection({ currentPage, setCurrentPage }: StoriaSectionProps) {
   }
 
   return (
-    <div className="mb-2">
-      <button 
+    <Box sx={{ mb: 2 }}>
+      <ListItemButton
         onClick={() => !isEditing && setIsStoriaMenuOpen(!isStoriaMenuOpen)}
-        className={`w-full flex items-center p-3 rounded-lg focus:outline-none ${
-          currentPage.startsWith('fase-') ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-900/50 text-gray-400'
-        } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+        selected={currentPage.startsWith('fase-')}
         disabled={isEditing}
+        sx={{
+          borderRadius: 2,
+          opacity: isEditing ? 0.5 : 1,
+          cursor: isEditing ? 'not-allowed' : 'pointer',
+          bgcolor: currentPage.startsWith('fase-') ? 'primary.main' : 'background.paper',
+          '&:hover': {
+            bgcolor: currentPage.startsWith('fase-') ? 'primary.dark' : 'action.hover',
+          },
+        }}
       >
-        <Settings size={20} className="mr-3" />
-        <span>Storia</span>
-        <span className={`ml-2 text-xs ${
-          currentPage.startsWith('fase-') ? 'text-zinc-900' : 'text-gray-400'
-        }`}>
-          ({formattedTime})
-        </span>
+        <ListItemIcon sx={{ 
+          minWidth: 40, 
+          color: currentPage.startsWith('fase-') ? 'primary.contrastText' : 'text.secondary' 
+        }}>
+          <Settings size={20} />
+        </ListItemIcon>
+        <ListItemText primary="Storia" />
+        <Chip 
+          label={formattedTime} 
+          size="small" 
+          sx={{ 
+            ml: 1, 
+            height: 20, 
+            fontSize: '0.7rem',
+            color: currentPage.startsWith('fase-') ? 'primary.contrastText' : 'text.secondary',
+            bgcolor: 'transparent'
+          }} 
+        />
         <ChevronDown 
           size={16} 
-          className={`ml-auto transition-transform duration-200 ${
-            isStoriaMenuOpen ? 'rotate-180' : ''
-          }`}
+          style={{ 
+            marginLeft: 'auto', 
+            transform: isStoriaMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s'
+          }}
         />
-      </button>
-      <div className={`overflow-hidden transition-all duration-200 ${
-        isStoriaMenuOpen ? 'mt-2' : 'max-h-0'
-      }`}>
-        {/* Lista delle fasi */}
-        {fasi
-          .slice()
-          .sort((a, b) => a.number - b.number)
-          .map(fase => (
-            <button
-              key={fase.id}
-              onClick={() => !isEditing && setCurrentPage(`fase-${fase.id}`)}
-              className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
-                currentPage === `fase-${fase.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-              } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={isEditing}
-            >
-              <div className="flex flex-col">
-                <span className='text-left'>Fase {fase.number}</span>
-                <span className={`text-xs text-left ${
-                  currentPage === `fase-${fase.id}` ? 'text-zinc-900' : 'text-gray-400'
-                }`}>
-                  {fase.title}
-                </span>
-              </div>
-            </button>
-          ))}
-        {/* Pulsante per aggiungere fase */}
-        <button
-          onClick={() => !isEditing && handleAddFase()}
-          className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <Plus size={16} className="mr-2" />
-          Add Fase
-        </button>
-        {/* Pulsante per importare fase */}
-        <button
-          className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-            <Upload size={16} className="mr-2" />
+      </ListItemButton>
+      
+      <Collapse in={isStoriaMenuOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ mt: 1 }}>
+          {fasi
+            .slice()
+            .sort((a, b) => a.number - b.number)
+            .map(fase => (
+              <ListItemButton
+                key={fase.id}
+                selected={currentPage === `fase-${fase.id}`}
+                onClick={() => !isEditing && setCurrentPage(`fase-${fase.id}`)}
+                disabled={isEditing}
+                sx={{ 
+                  pl: 2,
+                  mb: 0.5,
+                  opacity: isEditing ? 0.5 : 1,
+                  cursor: isEditing ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <Typography variant="body2">Fase {fase.number}</Typography>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      color: currentPage === `fase-${fase.id}` ? 'primary.contrastText' : 'text.secondary'
+                    }}
+                  >
+                    {fase.title}
+                  </Typography>
+                </Box>
+              </ListItemButton>
+            ))}
+          
+          <Button
+            variant="text"
+            startIcon={<Plus size={16} />}
+            onClick={() => !isEditing && handleAddFase()}
+            disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              mb: 0.5,
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
+          >
+            Add Fase
+          </Button>
+          
+          <Button
+            variant="text"
+            component="label"
+            startIcon={<Upload size={16} />}
+            disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              mb: 0.5,
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
+          >
             Import Fase
             <input 
               type="file" 
               accept=".json" 
               onChange={!isEditing ? handleImportFase : undefined} 
-              className="hidden"
+              style={{ display: 'none' }}
               multiple
               disabled={isEditing}
             />
-          </label>
-        </button>
-        
-        {/* Pulsante per esportare tutte le fasi */}
-        <button
-          onClick={() => !isEditing && handleExportAllFasi()}
-          className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <Download size={16} className="mr-2" />
-          Export All
-        </button>
-        
-        {/* Pulsante per importare tutte le fasi */}
-        <button
-          className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-            <Upload size={16} className="mr-2" />
+          </Button>
+          
+          <Button
+            variant="text"
+            startIcon={<Download size={16} />}
+            onClick={() => !isEditing && handleExportAllFasi()}
+            disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              mb: 0.5,
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
+          >
+            Export All
+          </Button>
+          
+          <Button
+            variant="text"
+            component="label"
+            startIcon={<Upload size={16} />}
+            disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
+          >
             Import All Fasi
             <input 
               type="file" 
               accept=".json" 
               onChange={!isEditing ? handleImportAllFasi : undefined} 
-              className="hidden"
+              style={{ display: 'none' }}
               disabled={isEditing}
             />
-          </label>
-        </button>
-      </div>
-    </div>
+          </Button>
+        </List>
+      </Collapse>
+    </Box>
   )
 }
 

@@ -3,6 +3,16 @@ import { useState } from 'react'
 import { useCharacterStore } from '../../stores/characterStore'
 import { Character } from '../../stores/characterStore'
 import { useEditModeStore } from '../../stores/editModeStore'
+import { 
+  List, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  Collapse, 
+  Button, 
+  Box,
+  Typography
+} from '@mui/material'
 
 interface CharacterSectionProps {
   currentPage: string
@@ -66,71 +76,110 @@ function CharacterSection({ currentPage, setCurrentPage }: CharacterSectionProps
   }
 
   return (
-    <div className="mb-2">
-      <button 
+    <Box sx={{ mb: 2 }}>
+      <ListItemButton
         onClick={() => !isEditing && setIsCharacterMenuOpen(!isCharacterMenuOpen)}
-        className={`w-full flex items-center p-3 rounded-lg focus:outline-none ${
-          currentPage.startsWith('character-') ? 'bg-amber-500 text-zinc-950' : 'bg-zinc-900/50 text-gray-400'
-        } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+        selected={currentPage.startsWith('character-')}
         disabled={isEditing}
+        sx={{
+          borderRadius: 2,
+          opacity: isEditing ? 0.5 : 1,
+          cursor: isEditing ? 'not-allowed' : 'pointer',
+          bgcolor: currentPage.startsWith('character-') ? 'primary.main' : 'background.paper',
+          '&:hover': {
+            bgcolor: currentPage.startsWith('character-') ? 'primary.dark' : 'action.hover',
+          },
+        }}
       >
-        <Users size={20} className="mr-3" />
-        <span>Personaggi</span>
+        <ListItemIcon sx={{ 
+          minWidth: 40, 
+          color: currentPage.startsWith('character-') ? 'primary.contrastText' : 'text.secondary' 
+        }}>
+          <Users size={20} />
+        </ListItemIcon>
+        <ListItemText primary="Personaggi" />
         <ChevronDown 
           size={16} 
-          className={`ml-auto transition-transform duration-200 ${
-            isCharacterMenuOpen ? 'rotate-180' : ''
-          }`}
+          style={{ 
+            marginLeft: 'auto', 
+            transform: isCharacterMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s'
+          }}
         />
-      </button>
-      <div className={`overflow-hidden transition-all duration-200 ${
-        isCharacterMenuOpen ? 'mt-2' : 'max-h-0'
-      }`}>
-        {characters.map(character => (
-          <button
-            key={character.id}
-            onClick={() => !isEditing && setCurrentPage(`character-${character.id}`)}
-            className={`w-full flex items-center p-2 mb-1 rounded-lg focus:outline-none ${
-              currentPage === `character-${character.id}` ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-            } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+      </ListItemButton>
+      
+      <Collapse in={isCharacterMenuOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ mt: 1 }}>
+          {characters.map(character => (
+            <ListItemButton
+              key={character.id}
+              selected={currentPage === `character-${character.id}`}
+              onClick={() => !isEditing && setCurrentPage(`character-${character.id}`)}
+              disabled={isEditing}
+              sx={{ 
+                pl: 2,
+                mb: 0.5,
+                opacity: isEditing ? 0.5 : 1,
+                cursor: isEditing ? 'not-allowed' : 'pointer',
+              }}
+            >
+              <ListItemText primary={character.name} />
+            </ListItemButton>
+          ))}
+          
+          <Button
+            variant="text"
+            startIcon={<Plus size={16} />}
+            onClick={() => !isEditing && handleAddCharacter()}
             disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              mb: 0.5,
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
           >
-            {character.name}
-          </button>
-        ))}
-        {/* Pulsante per aggiungere personaggio */}
-        <button
-          onClick={() => !isEditing && handleAddCharacter()}
-          className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <Plus size={16} className="mr-2" />
-          Add Character
-        </button>
-        {/* Pulsante per importare personaggi */}
-        <button
-          className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
-            isEditing ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          disabled={isEditing}
-        >
-          <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-            <Upload size={16} className="mr-2" />
+            Add Character
+          </Button>
+          
+          <Button
+            variant="text"
+            component="label"
+            startIcon={<Upload size={16} />}
+            disabled={isEditing}
+            fullWidth
+            sx={{ 
+              justifyContent: 'flex-start',
+              py: 1,
+              textAlign: 'left',
+              color: 'text.secondary',
+              bgcolor: 'rgba(245, 158, 11, 0.1)',
+              '&:hover': {
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
+              },
+              opacity: isEditing ? 0.5 : 1,
+            }}
+          >
             Import Character(s)
             <input 
               type="file" 
               accept=".json" 
               onChange={!isEditing ? handleImportCharacter : undefined} 
-              className="hidden"
+              style={{ display: 'none' }}
               multiple
               disabled={isEditing}
             />
-          </label>
-        </button>
-      </div>
-    </div>
+          </Button>
+        </List>
+      </Collapse>
+    </Box>
   )
 }
 

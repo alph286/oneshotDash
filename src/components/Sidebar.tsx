@@ -4,6 +4,9 @@ import { useEditModeStore } from '../stores/editModeStore'
 import BeholderBox from './ui/BeholderBox'
 import CharacterSection from './sidebar/CharacterSection'
 import StoriaSection from './sidebar/StoriaSection'
+import { Box, Paper, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import { ThemeProvider } from '@mui/material/styles'
+import theme from '../theme/muiTheme'
 
 interface SidebarProps {
   currentPage: string
@@ -38,38 +41,71 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   }, [])
 
   return (
-    <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
-      <BeholderBox />
-      <div 
-        ref={navContainerRef}
-        className={`flex-grow overflow-y-auto custom-scrollbar ${hasScrollbar ? 'pr-2' : ''}`}
+    <ThemeProvider theme={theme}>
+      <Paper 
+        elevation={0}
+        sx={{ 
+          width: 256, 
+          height: '100%', 
+          bgcolor: 'background.default',
+          display: 'flex', 
+          flexDirection: 'column',
+          p: 2,
+          borderRadius: 0
+        }}
       >
-        <nav>
-          <button 
-            onClick={() => !isEditing && setCurrentPage('home')}
-            className={`w-full flex items-center p-3 mb-2 rounded-lg focus:outline-none ${
-              currentPage === 'home' ? 'bg-amber-500 text-zinc-950' : 'hover:bg-zinc-900 text-gray-400'
-            } ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isEditing}
-          >
-            <Home size={20} className="mr-3" />
-            Home
-          </button>
-          
-          {/* Componente per la sezione Personaggi */}
-          <CharacterSection 
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage} 
-          />
+        <BeholderBox />
+        <Box 
+          ref={navContainerRef}
+          sx={{ 
+            flexGrow: 1, 
+            overflow: 'auto',
+            pr: hasScrollbar ? 1 : 0,
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'rgba(0,0,0,0.1)',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'rgba(255,255,255,0.2)',
+              borderRadius: '4px',
+            },
+          }}
+        >
+          <List component="nav" disablePadding>
+            <ListItemButton
+              selected={currentPage === 'home'}
+              onClick={() => !isEditing && setCurrentPage('home')}
+              disabled={isEditing}
+              sx={{
+                mb: 1,
+                opacity: isEditing ? 0.5 : 1,
+                cursor: isEditing ? 'not-allowed' : 'pointer',
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: currentPage === 'home' ? 'primary.contrastText' : 'text.secondary' }}>
+                <Home size={20} />
+              </ListItemIcon>
+              <ListItemText primary="Home" />
+            </ListItemButton>
+            
+            {/* Componente per la sezione Personaggi */}
+            <CharacterSection 
+              currentPage={currentPage} 
+              setCurrentPage={setCurrentPage} 
+            />
 
-          {/* Componente per la sezione Storia */}
-          <StoriaSection 
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage} 
-          />
-        </nav>
-      </div>
-    </div>
+            {/* Componente per la sezione Storia */}
+            <StoriaSection 
+              currentPage={currentPage} 
+              setCurrentPage={setCurrentPage} 
+            />
+          </List>
+        </Box>
+      </Paper>
+    </ThemeProvider>
   )
 }
 
