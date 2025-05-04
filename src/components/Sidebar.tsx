@@ -2,7 +2,7 @@ import { Home, Users, Settings, ChevronDown } from 'lucide-react'
 import { useCharacterStore } from '../stores/characterStore'
 import { Character } from '../stores/characterStore';
 import { useState, useRef, useEffect } from 'react'
-import { Plus, Upload } from 'lucide-react'
+import { Plus, Upload, Download } from 'lucide-react'
 import { useStoriaStore } from '../stores/storiaStore';
 import { useEditModeStore } from '../stores/editModeStore';
 import BeholderBox from './ui/BeholderBox';
@@ -219,6 +219,126 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
   const minutes = totalMinutes % 60;
   const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
+  const handleExportAllFasi = () => {
+    if (isEditing) return;
+    
+    // Ordina le fasi per numero
+    const sortedFasi = [...fasi].sort((a, b) => a.number - b.number);
+    
+    // Crea un oggetto con tutte le fasi ordinate
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      totalEstimatedTime: totalMinutes,
+      phases: sortedFasi
+    };
+    
+    // Crea e scarica il file JSON
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `all_phases_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    alert('Tutte le fasi sono state esportate con successo!');
+  };
+
+  const handleImportAllFasi = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importData = JSON.parse(e.target?.result as string);
+        
+        // Verifica che il file contenga l'array delle fasi
+        if (!importData.phases || !Array.isArray(importData.phases)) {
+          throw new Error('File non valido: manca l\'array delle fasi');
+        }
+        
+        // Ottieni tutti i numeri di fase già utilizzati
+        const usedNumbers = new Set(fasi.map(fase => fase.number));
+        
+        // Contatori per il report finale
+        let importedCount = 0;
+        let eventsCount = 0;
+        
+        // Importa ogni fase
+        for (const faseData of importData.phases) {
+          // Verifica che la fase abbia i campi richiesti
+          if (!faseData.number || !faseData.title) {
+            console.warn('Fase non valida, mancano campi obbligatori:', faseData);
+            continue;
+          }
+          
+          // Trova un numero disponibile per la fase
+          let faseNumber = faseData.number;
+          while (usedNumbers.has(faseNumber)) {
+            faseNumber++;
+          }
+          usedNumbers.add(faseNumber);
+          
+          // Crea una nuova fase
+          const newFase = {
+            number: faseNumber,
+            title: faseData.title,
+            estimatedTime: faseData.estimatedTime || 30
+          };
+          
+          // Aggiungi la fase
+          const phaseId = addPhase(newFase);
+          importedCount++;
+          
+          // Importa gli eventi se presenti
+          if (faseData.events && Array.isArray(faseData.events)) {
+            // Ottieni lo stato aggiornato delle fasi
+            const currentPhases = useStoriaStore.getState().phases;
+            const addedPhase = currentPhases.find(fase => fase.number === faseNumber);
+            
+            if (addedPhase) {
+              // Ordina gli eventi per posizione
+              const sortedEvents = [...faseData.events].sort((a, b) => 
+                (a.position !== undefined && b.position !== undefined) 
+                  ? a.position - b.position 
+                  : 0
+              );
+              
+              // Aggiungi ogni evento alla fase
+              sortedEvents.forEach((event, index) => {
+                if (event.type && event.title && event.description) {
+                  const newEvent = {
+                    type: event.type,
+                    title: event.title,
+                    description: event.description,
+                    timestamp: new Date(),
+                    position: event.position !== undefined ? event.position : index,
+                    data: event.data
+                  };
+                  
+                  // Aggiungi l'evento alla fase
+                  addEvent(addedPhase.id, newEvent);
+                  eventsCount++;
+                }
+              });
+            }
+          }
+        }
+        
+        alert(`Importazione completata: ${importedCount} fasi e ${eventsCount} eventi importati con successo!`);
+      } catch (error) {
+        console.error('Errore durante l\'importazione delle fasi:', error);
+        alert('File non valido o errore durante l\'importazione');
+      }
+    };
+    
+    reader.readAsText(files[0]);
+    
+    // Resetta l'input per permettere di importare lo stesso file più volte
+    event.target.value = '';
+  };
+
   return (
     <div className="w-64 h-full bg-zinc-950 p-4 flex flex-col">
       <BeholderBox />
@@ -367,7 +487,7 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
               </button>
               {/* Import Fase button */}
               <button
-                className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                className={`w-full flex items-center p-2 mb-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
                   isEditing ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 disabled={isEditing}
@@ -381,6 +501,38 @@ function Sidebar({ currentPage, setCurrentPage }: SidebarProps) {
                     onChange={!isEditing ? handleImportFase : undefined} 
                     className="hidden"
                     multiple
+                    disabled={isEditing}
+                  />
+                </label>
+              </button>
+              
+              {/* Export All button */}
+              <button
+                onClick={() => !isEditing && handleExportAllFasi()}
+                className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
+              >
+                <Download size={16} className="mr-2" />
+                Export All
+              </button>
+              
+              {/* Import All Fasi button */}
+              <button
+                className={`w-full flex items-center p-2 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-gray-400 focus:outline-none ${
+                  isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isEditing}
+              >
+                <label className={`w-full flex items-center ${isEditing ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                  <Upload size={16} className="mr-2" />
+                  Import All Fasi
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    onChange={!isEditing ? handleImportAllFasi : undefined} 
+                    className="hidden"
                     disabled={isEditing}
                   />
                 </label>
