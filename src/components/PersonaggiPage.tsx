@@ -12,6 +12,7 @@ import NotesPg from './personaggi/NotesPg';
 import Spells from './personaggi/Spells';
 import ProficienciesAndST from './personaggi/ProficienciesAndST';
 import { useEditModeStore } from '../stores/editModeStore'; // Add this import
+import { Container, Paper, Typography, Grid, Box } from '@mui/material';
 
 interface PersonaggiPageProps {
   selectedCharacterId?: string;
@@ -171,7 +172,7 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
     // Remove this empty effect completely
   }, [selectedCharacter?.useMetric]);
   return (
-    <div className="h-full overflow-auto scrollbar-auto">
+    <Box className="h-full overflow-auto scrollbar-auto">
       {selectedCharacter ? (
         <>
           <ToolbarPg
@@ -195,47 +196,46 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             showNotes={selectedCharacter.showNotes ?? true}
             showSpells={selectedCharacter.showSpells ?? true}
             showProficiencies={selectedCharacter.showProficiencies ?? true}
-          
-          
-        />
-        <div className="bg-zinc-900/50 p-6 rounded-lg">
-          <HeaderPg
-            character={isEditing ? editedCharacter! : selectedCharacter}
-            isEditing={isEditing}
-            onInputChange={handleInputChange}
-            onKeyPress={handleKeyPress}
           />
-         
-         
+          <Paper elevation={3} sx={{ p: 4, m:3, bgcolor: 'background.paper', borderRadius: 2 }}>
+            <HeaderPg
+              character={isEditing ? editedCharacter! : selectedCharacter}
+              isEditing={isEditing}
+              onInputChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+            />
 
             {/* Character Stats Section */}
-            <div className="grid grid-cols-6 gap-4 mb-6">
-              <div className="col-span-2 grid grid-cols-3 gap-4">
-                {stats.map((stat) => (
-                  <CardCaratteristica
-                    key={stat.name}
-                    name={stat.name}
-                    field={stat.field}
-                    value={isEditing ? (editedCharacter?.[stat.field] as number) : selectedCharacter[stat.field]}
-                    baseBonus={isEditing 
-                      ? (editedCharacter?.[`${stat.field}Bonus` as keyof Character] as number) 
-                      : selectedCharacter[`${stat.field}Bonus` as keyof Character] as number}
-                    additionalBonus={isEditing 
-                      ? bonuses[stat.field] 
-                      : (selectedCharacter[`${stat.field}AdditionalBonus` as keyof Character] as number) || 0}
-                    isEditing={isEditing}
-                    onValueChange={(value) => handleInputChange(stat.field, value)}
-                    onBonusChange={(value) => {
-                      const newBonuses = { ...bonuses, [stat.field]: value };
-                      setBonuses(newBonuses);
-                    }}
-                    onKeyDown={handleKeyPress}
-                  />
-                ))}
-              </div>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid size={4}>
+                <Grid container spacing={1}>
+                  {stats.map((stat) => (
+                    <Grid size={4} key={stat.name}>
+                      <CardCaratteristica
+                        name={stat.name}
+                        field={stat.field}
+                        value={isEditing ? (editedCharacter?.[stat.field] as number) : selectedCharacter[stat.field]}
+                        baseBonus={isEditing 
+                          ? (editedCharacter?.[`${stat.field}Bonus` as keyof Character] as number) 
+                          : selectedCharacter[`${stat.field}Bonus` as keyof Character] as number}
+                        additionalBonus={isEditing 
+                          ? bonuses[stat.field] 
+                          : (selectedCharacter[`${stat.field}AdditionalBonus` as keyof Character] as number) || 0}
+                        isEditing={isEditing}
+                        onValueChange={(value) => handleInputChange(stat.field, value)}
+                        onBonusChange={(value) => {
+                          const newBonuses = { ...bonuses, [stat.field]: value };
+                          setBonuses(newBonuses);
+                        }}
+                        onKeyDown={handleKeyPress}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
 
               {/* Equipment Card */}
-              <div className="col-span-2">
+              <Grid size={4}>
                 <EquipmentCard
                   armorClass={isEditing ? (editedCharacter?.armorClass || 0) : selectedCharacter.armorClass}
                   equipment={isEditing ? (editedCharacter?.equipment || '') : selectedCharacter.equipment}
@@ -243,51 +243,52 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
                   onArmorClassChange={(value) => handleInputChange('armorClass', value)}
                   onEquipmentChange={(value) => handleInputChange('equipment', value)}
                 />
-              </div>
+              </Grid>
 
               {/* HP component and VariousStat */}
-              <div className="col-span-2 grid gap-4">
-                <HitPoints
-                  currentHP={isEditing ? (editedCharacter?.currentHP || 0) : selectedCharacter.currentHP}
-                  totalHP={isEditing ? (editedCharacter?.totalHP || 0) : selectedCharacter.totalHP}
-                  temporaryHP={isEditing ? (editedCharacter?.temporaryHP || 0) : selectedCharacter.temporaryHP}
-                  isEditing={isEditing}
-                  onCurrentHPChange={(value) => handleInputChange('currentHP', value)}
-                  onTotalHPChange={(value) => handleInputChange('totalHP', value)}
-                  onTemporaryHPChange={(value) => handleInputChange('temporaryHP', value)}
-                />
-                
-              
-              <VariousStat
-                initiative={isEditing 
-                  ? (editedCharacter?.initiative ?? 0) 
-                  : selectedCharacter.initiative}
-                speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
-                darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
-                inspiration={isEditing ? (editedCharacter?.inspiration || 0) : selectedCharacter.inspiration}
-                isEditing={isEditing}
-                useMetric={selectedCharacter.useMetric ?? false} // Add this
-                onSpeedChange={(value) => handleInputChange('speed', value)}
-                onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
-                onInspirationChange={(value) => handleInputChange('inspiration', value)}
-              />
-              </div>
-            </div>
-
-           
+              <Grid size={4}>
+                <Grid container direction="column" spacing={2}>
+                  <Grid>
+                    <HitPoints
+                      currentHP={isEditing ? (editedCharacter?.currentHP || 0) : selectedCharacter.currentHP}
+                      totalHP={isEditing ? (editedCharacter?.totalHP || 0) : selectedCharacter.totalHP}
+                      temporaryHP={isEditing ? (editedCharacter?.temporaryHP || 0) : selectedCharacter.temporaryHP}
+                      isEditing={isEditing}
+                      onCurrentHPChange={(value) => handleInputChange('currentHP', value)}
+                      onTotalHPChange={(value) => handleInputChange('totalHP', value)}
+                      onTemporaryHPChange={(value) => handleInputChange('temporaryHP', value)}
+                    />
+                  </Grid>
+                  <Grid>
+                    <VariousStat
+                      initiative={isEditing 
+                        ? (editedCharacter?.initiative ?? 0) 
+                        : selectedCharacter.initiative}
+                      speed={isEditing ? (editedCharacter?.speed || 0) : selectedCharacter.speed}
+                      darkvision={isEditing ? (editedCharacter?.darkvision || 0) : selectedCharacter.darkvision}
+                      inspiration={isEditing ? (editedCharacter?.inspiration || 0) : selectedCharacter.inspiration}
+                      isEditing={isEditing}
+                      useMetric={selectedCharacter.useMetric ?? false}
+                      onSpeedChange={(value) => handleInputChange('speed', value)}
+                      onDarkvisionChange={(value) => handleInputChange('darkvision', value)}
+                      onInspirationChange={(value) => handleInputChange('inspiration', value)}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
 
             {/* Proficiencies & Saving Throws Section */}
-            <div className="mb-6">
-              
+            <Box sx={{ mb: 3 }}>
               {(selectedCharacter?.showProficiencies ?? true) && (
-              <ProficienciesAndST 
-                characterId={selectedCharacter?.id} 
-                isEditing={isEditing} 
-                onInputChange={handleInputChange}
-                editedValue={isEditing ? editedCharacter?.otherProficiencies : undefined}
-              />
+                <ProficienciesAndST 
+                  characterId={selectedCharacter?.id} 
+                  isEditing={isEditing} 
+                  onInputChange={handleInputChange}
+                  editedValue={isEditing ? editedCharacter?.otherProficiencies : undefined}
+                />
               )}
-            </div>
+            </Box>
 
             {/* Notes Section */}
             {(selectedCharacter?.showNotes ?? true) && (
@@ -299,17 +300,17 @@ function PersonaggiPage({ selectedCharacterId }: PersonaggiPageProps) {
             )}
 
             {(selectedCharacter?.showSpells ?? true) && selectedCharacter && (
-            <Spells characterId={selectedCharacter.id} />
+              <Spells characterId={selectedCharacter.id} />
             )}
-          </div>
+          </Paper>
         </>
       ) : (
-        <div>
-          <h1 className="text-3xl font-bold mb-6">Personaggi</h1>
-          <p className="text-gray-400">Seleziona un personaggio dalla barra laterale</p>
-        </div>
+        <Box>
+          <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>Personaggi</Typography>
+          <Typography color="text.secondary">Seleziona un personaggio dalla barra laterale</Typography>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

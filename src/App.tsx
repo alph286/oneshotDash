@@ -7,15 +7,15 @@ import Sidebar from './components/Sidebar'
 import Toolbar from './components/Toolbar'
 import bgImage from './assets/bg.png'
 import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import muiTheme from './theme/muiTheme';
+import { CssBaseline } from '@mui/material'; // Add this import
+import theme from './theme/muiTheme';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
 
   return (
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline /> {/* Reset CSS per consistenza */}
+    <ThemeProvider theme={theme}>
+      <CssBaseline /> {/* This is where the error was occurring */}
       <div className="flex min-h-screen h-screen overflow-hidden bg-black text-gray-300">
         <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
         <div className="flex-1 flex flex-col">

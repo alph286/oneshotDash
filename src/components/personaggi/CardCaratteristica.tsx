@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Character } from '../../stores/characterStore';
+import { Paper, Typography, TextField, Box } from '@mui/material';
 
 interface CardCaratteristicaProps {
   name: string;
@@ -31,50 +32,56 @@ const CardCaratteristica: React.FC<CardCaratteristicaProps> = ({
 
   if (isEditing) {
     return (
-      <div className="bg-zinc-800 p-3 rounded-lg text-center">
-        <div className="text-lg font-bold text-amber-500 mb-2">{name}</div>
-        <div className="space-y-2">
-          <div>
-            <label className="text-sm text-gray-400 block">Value</label>
-            <input
+      <Paper elevation={2} sx={{ p: 2, textAlign: 'center', bgcolor: 'background.paper' }}>
+        <Typography variant="h5" color="primary.main" fontWeight="bold" mb={1}>{name}</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">Value</Typography>
+            <TextField
               type="number"
               value={value}
               onChange={(e) => onValueChange(parseInt(e.target.value) || 0)}
               onKeyDown={onKeyDown}
               onBlur={(e) => onValueChange(parseInt(e.target.value) || 0)}
-              className="w-full bg-zinc-700 text-center rounded px-2 py-1"
+              variant="outlined"
+              size="small"
+              fullWidth
+              inputProps={{ style: { textAlign: 'center' } }}
             />
-          </div>
-          <div>
-            <label className="text-sm text-gray-400 block">Mod</label>
-            <input
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">Mod</Typography>
+            <TextField
               type="number"
               value={additionalBonus}
               onChange={(e) => onBonusChange(parseInt(e.target.value) || 0)}
               onKeyDown={onKeyDown}
               onBlur={(e) => onBonusChange(parseInt(e.target.value) || 0)}
-              className="w-full bg-zinc-700 text-center rounded px-2 py-1 text-sm"
+              variant="outlined"
+              size="small"
+              fullWidth
+              inputProps={{ style: { textAlign: 'center' } }}
             />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Paper>
     );
   }
 
   return (
-    <div className="bg-zinc-800 p-3 rounded-lg text-center">
-      <div className="text-lg font-bold text-amber-500 mb-2">{name}</div>
-      <div className="text-xl font-bold text-white mb-1">{value}</div>
-      <div className="text-sm text-gray-300">
+    <Paper elevation={2} sx={{ p: 2, textAlign: 'center', bgcolor: 'background.paper' }}>
+      <Typography variant="h5" color="primary.main" fontWeight="bold" mb={1}>{name}</Typography>
+      <Typography variant="h4" fontWeight="bold" mb={0.5}>{value}</Typography>
+      <Typography variant="body2" color="text.secondary">
         Base: {calculatedBaseBonus >= 0 ? '+' : ''}{calculatedBaseBonus}
-      </div>
-      <div className="text-sm text-amber-500">
+      </Typography>
+      <Typography variant="body2" color="primary.main">
         Mod: {additionalBonus >= 0 ? '+' : ''}{additionalBonus}
-      </div>
-      <div className="text-lg font-bold text-green-500 mt-2">
+      </Typography>
+      <Typography variant="h6" color="success.main" fontWeight="bold" mt={1}>
         Total: {totalBonus >= 0 ? '+' : ''}{totalBonus}
-      </div>
-    </div>
+      </Typography>
+    </Paper>
   );
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Paper, Typography, TextField, Box, LinearProgress } from '@mui/material';
 
 interface HitPointsProps {
   currentHP: number;
@@ -20,62 +21,75 @@ const HitPoints: React.FC<HitPointsProps> = ({
   onTemporaryHPChange,
 }) => {
   return (
-    <div className="bg-zinc-800 p-3 rounded-lg flex flex-col">
-      <div className="text-lg font-bold text-amber-500 mb-3">Hit Points</div>
+    <Paper elevation={2} sx={{ p: 2, display: 'flex', flexDirection: 'column', bgcolor: 'background.paper' }}>
+      <Typography variant="h5" color="primary.main" fontWeight="bold" mb={2}>Hit Points</Typography>
       
       {isEditing ? (
-        <div className="flex flex-col space-y-2">
-          <div className="grid grid-cols-3 gap-2">
-            <div>
-              <label className="text-sm text-gray-400 block">Current HP</label>
-              <input
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+            <Box>
+              <Typography variant="caption" color="text.secondary">Current HP</Typography>
+              <TextField
                 type="number"
                 value={currentHP}
                 onChange={(e) => onCurrentHPChange(parseInt(e.target.value) || 0)}
-                className="w-full bg-zinc-700 text-center rounded px-2 py-1"
+                variant="outlined"
+                size="small"
+                fullWidth
+                inputProps={{ style: { textAlign: 'center' } }}
               />
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 block">Max HP</label>
-              <input
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary">Max HP</Typography>
+              <TextField
                 type="number"
                 value={totalHP}
                 onChange={(e) => onTotalHPChange(parseInt(e.target.value) || 0)}
-                className="w-full bg-zinc-700 text-center rounded px-2 py-1"
+                variant="outlined"
+                size="small"
+                fullWidth
+                inputProps={{ style: { textAlign: 'center' } }}
               />
-            </div>
-            <div>
-              <label className="text-sm text-gray-400 block">Temp HP</label>
-              <input
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary">Temp HP</Typography>
+              <TextField
                 type="number"
                 value={temporaryHP}
                 onChange={(e) => onTemporaryHPChange(parseInt(e.target.value) || 0)}
-                className="w-full bg-zinc-700 text-center rounded px-2 py-1"
+                variant="outlined"
+                size="small"
+                fullWidth
+                inputProps={{ style: { textAlign: 'center' } }}
               />
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       ) : (
-        <div className="flex-grow flex flex-col justify-center">
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="text-sm text-gray-400">Current</div>
-            <div className="text-sm text-gray-400">Max</div>
-            <div className="text-sm text-gray-400">Temp</div>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="text-2xl font-bold text-amber-500">{currentHP}</div>
-            <div className="text-2xl font-bold text-white">{totalHP}</div>
-            <div className="text-2xl font-bold text-green-500">{temporaryHP > 0 ? `+${temporaryHP}` : temporaryHP}</div>
-          </div>
-          <div className="mt-2 bg-zinc-700 h-2 rounded-full overflow-hidden">
-            <div 
-              className="bg-amber-500 h-full" 
-              style={{ width: `${Math.min(100, (currentHP / totalHP) * 100)}%` }}
-            ></div>
-          </div>
-        </div>
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, textAlign: 'center' }}>
+            <Typography variant="caption" color="text.secondary">Current</Typography>
+            <Typography variant="caption" color="text.secondary">Max</Typography>
+            <Typography variant="caption" color="text.secondary">Temp</Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, textAlign: 'center' }}>
+            <Typography variant="h4" fontWeight="bold" color="primary.main">{currentHP}</Typography>
+            <Typography variant="h4" fontWeight="bold">{totalHP}</Typography>
+            <Typography variant="h4" fontWeight="bold" color="success.main">
+              {temporaryHP > 0 ? `+${temporaryHP}` : temporaryHP}
+            </Typography>
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <LinearProgress 
+              variant="determinate" 
+              value={Math.min(100, (currentHP / totalHP) * 100)} 
+              color="primary"
+              sx={{ height: 8, borderRadius: 4 }}
+            />
+          </Box>
+        </Box>
       )}
-    </div>
+    </Paper>
   );
 };
 

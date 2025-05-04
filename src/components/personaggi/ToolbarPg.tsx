@@ -1,19 +1,29 @@
-import { Pencil, Save, Trash2, Download, Book, Wand2, Ruler, Shield } from 'lucide-react';
+import React from 'react';
+import { Box, IconButton, Tooltip, AppBar, Toolbar, Stack, alpha } from '@mui/material';
+// Importa le icone Material UI
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import ShieldIcon from '@mui/icons-material/Shield';
 
 interface ToolbarPgProps {
   isEditing: boolean;
-  useMetric: boolean; // Add this
+  useMetric: boolean;
   onEdit: () => void;
   onSave: React.MouseEventHandler<HTMLButtonElement>;
   onExport: () => void;
   onDelete: () => void;
   onToggleNotes: () => void;
   onToggleSpells: () => void;
-  onToggleMetric: () => void; // Add this
+  onToggleMetric: () => void;
   showNotes: boolean;
   showSpells: boolean;
-  onToggleProficiencies: () => void; // Add this
-  showProficiencies: boolean; // Add this
+  onToggleProficiencies: () => void;
+  showProficiencies: boolean;
 }
 
 function ToolbarPg({ 
@@ -32,85 +42,134 @@ function ToolbarPg({
   showProficiencies
 }: ToolbarPgProps) {
   return (
-    <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-sm p-2 flex justify-between mb-4 gap-2">
-      <div className="flex gap-2">
-      <button
-          onClick={onToggleProficiencies}
-          title="Toggle Proficiencies"
-          className={`p-2 rounded-lg transition-colors focus:outline-none ${
-            showProficiencies ? 'bg-indigo-800 hover:bg-indigo-700' : 'bg-zinc-800 hover:bg-zinc-700'
-          }`}
-        >
-          <Shield size={20} className={`${showProficiencies ? 'text-indigo-300' : 'text-indigo-500'}`} />
-        </button>
-        <button
-          onClick={onToggleNotes}
-          title="Toggle Notes" // Add this
-          className={`p-2 rounded-lg transition-colors focus:outline-none ${
-            showNotes ? 'bg-purple-800 hover:bg-purple-700' : 'bg-zinc-800 hover:bg-zinc-700'
-          }`}
-        >
-          <Book size={20} className={`${showNotes ? 'text-purple-300' : 'text-purple-500'}`} />
-        </button>
-        <button
-          onClick={onToggleSpells}
-          title="Toggle Spells" // Add this
-          className={`p-2 rounded-lg transition-colors focus:outline-none ${
-            showSpells ? 'bg-blue-800 hover:blue-700' : 'bg-zinc-800 hover:bg-zinc-700'
-          }`}
-        >
-          <Wand2 size={20} className={`${showSpells ? 'text-blue-200' : 'text-blue-300'}`} />
-        </button>
-       
-      
-        <button
-          onClick={onToggleMetric}
-          title="Toggle Metric" // Add this
-          className={`p-2 rounded-lg transition-colors focus:outline-none ${
-            useMetric ? 'bg-green-800 hover:bg-green-700' : 'bg-zinc-800 hover:bg-zinc-700'
-          }`}
-        >
-          <Ruler size={20} className={`${useMetric ? 'text-green-300' : 'text-green-500'}`} />
-        </button>
-      </div>
-      
-      <div className="flex gap-2">
-        {!isEditing && (
-          <button
-            onClick={onEdit}
-            title="Edit Character" // Add this
-            className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-          >
-            <Pencil size={20} className="text-amber-500" />
-          </button>
-        )}
-        {isEditing && (
-          <button
-            onClick={onSave}
-            title="Save Changes" // Add this
-            className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-          >
-            <Save size={20} className="text-green-500" />
-          </button>
-        )}
-        <button
-          onClick={onExport}
-          title="Export Character" // Add this
-          className="p-2 rounded-lg bg-zinc-800 hover:bg-blue-900 transition-colors"
-          disabled={isEditing}
-        >
-          <Download size={20} className={`text-blue-500 ${isEditing ? 'opacity-50' : ''}`} />
-        </button>
-        <button
-          onClick={onDelete}
-          title="Delete Character" // Add this
-          className="p-2 rounded-lg bg-zinc-800 hover:bg-red-900 transition-colors"
-          disabled={isEditing}
-        >
-          <Trash2 size={20} className={`text-red-500 ${isEditing ? 'opacity-50' : ''}`} />
-        </button>
-      </div>
-    </div>
+    <AppBar 
+      position="sticky" 
+      color="transparent" 
+      sx={{ 
+        top: 0, 
+        zIndex: 50, 
+        bgcolor: alpha('#18181b', 0.8),
+        backdropFilter: 'blur(4px)',
+        mb: 4,
+        boxShadow: 'none',
+        borderBottom: '1px solid',
+        borderColor: 'divider'
+      }}
+    >
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', p: 1 }}>
+        <Stack direction="row" spacing={1}>
+          <Tooltip title="Abilità e Competenze">
+            <IconButton
+              onClick={onToggleProficiencies}
+              color={showProficiencies ? "primary" : "default"}
+              sx={{ 
+                bgcolor: showProficiencies ? alpha('#6366f1', 0.2) : 'background.paper',
+                '&:hover': { bgcolor: showProficiencies ? alpha('#6366f1', 0.3) : alpha('#27272a', 0.8) }
+              }}
+            >
+              <ShieldIcon fontSize="small" sx={{ color: showProficiencies ? "#a5b4fc" : "#6366f1" }} />
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Note">
+            <IconButton
+              onClick={onToggleNotes}
+              color={showNotes ? "secondary" : "default"}
+              sx={{ 
+                bgcolor: showNotes ? alpha('#7c3aed', 0.2) : 'background.paper',
+                '&:hover': { bgcolor: showNotes ? alpha('#7c3aed', 0.3) : alpha('#27272a', 0.8) }
+              }}
+            >
+              <MenuBookIcon fontSize="small" sx={{ color: showNotes ? "#c4b5fd" : "#7c3aed" }} />
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Incantesimi">
+            <IconButton
+              onClick={onToggleSpells}
+              color={showSpells ? "info" : "default"}
+              sx={{ 
+                bgcolor: showSpells ? alpha('#3b82f6', 0.2) : 'background.paper',
+                '&:hover': { bgcolor: showSpells ? alpha('#3b82f6', 0.3) : alpha('#27272a', 0.8) }
+              }}
+            >
+              <AutoFixHighIcon fontSize="small" sx={{ color: showSpells ? "#bfdbfe" : "#3b82f6" }} />
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Sistema Metrico">
+            <IconButton
+              onClick={onToggleMetric}
+              color={useMetric ? "success" : "default"}
+              sx={{ 
+                bgcolor: useMetric ? alpha('#10b981', 0.2) : 'background.paper',
+                '&:hover': { bgcolor: useMetric ? alpha('#10b981', 0.3) : alpha('#27272a', 0.8) }
+              }}
+            >
+              <StraightenIcon fontSize="small" sx={{ color: useMetric ? "#a7f3d0" : "#10b981" }} />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+        
+        <Stack direction="row" spacing={1}>
+          {!isEditing && (
+            <Tooltip title="Modifica Personaggio">
+              <IconButton
+                onClick={onEdit}
+                sx={{ 
+                  bgcolor: 'background.paper',
+                  '&:hover': { bgcolor: alpha('#27272a', 0.8) }
+                }}
+              >
+                <EditIcon fontSize="small" sx={{ color: "#f59e0b" }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          
+          {isEditing && (
+            <Tooltip title="Salva Modifiche">
+              <IconButton
+                onClick={onSave}
+                sx={{ 
+                  bgcolor: 'background.paper',
+                  '&:hover': { bgcolor: alpha('#27272a', 0.8) }
+                }}
+              >
+                <SaveIcon fontSize="small" sx={{ color: "#10b981" }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          
+          <Tooltip title="Esporta Personaggio">
+            <IconButton
+              onClick={onExport}
+              disabled={isEditing}
+              sx={{ 
+                bgcolor: 'background.paper',
+                '&:hover': { bgcolor: isEditing ? undefined : alpha('#1e3a8a', 0.2) },
+                '& svg': { opacity: isEditing ? 0.5 : 1 }
+              }}
+            >
+              <FileDownloadIcon fontSize="small" sx={{ color: "#3b82f6" }} />
+            </IconButton>
+          </Tooltip>
+          
+          <Tooltip title="Elimina Personaggio">
+            <IconButton
+              onClick={onDelete}
+              disabled={isEditing}
+              sx={{ 
+                bgcolor: 'background.paper',
+                '&:hover': { bgcolor: isEditing ? undefined : alpha('#7f1d1d', 0.2) },
+                '& svg': { opacity: isEditing ? 0.5 : 1 }
+              }}
+            >
+              <DeleteIcon fontSize="small" sx={{ color: "#ef4444" }} />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </Toolbar>
+    </AppBar>
   );
 }
 
